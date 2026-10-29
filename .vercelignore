@@ -1,0 +1,20 @@
+# Dependencies and build output (Vercel installs and builds on its own)
+node_modules
+dist
+
+# Version control and tooling
+.git
+.atl
+.codegraph
+.claude
+.env
+.env.*
+
+# Working material that the site does not need
+odd
+SPEC.md
+portafolio-libro-kit
+portfolio-redesign-handoff
+videos
+imagenes_proyectos
+scripts/source-images

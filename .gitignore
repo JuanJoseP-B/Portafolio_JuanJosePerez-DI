@@ -1,0 +1,25 @@
+node_modules
+dist
+*.tsbuildinfo
+*.log
+.DS_Store
+.env
+.env.*
+.codegraph
+
+# Original project videos (hundreds of MB); only the compressed ones in public/video are used
+imagenes_proyectos/*.mp4
+
+# Untouched originals used by the optimize scripts (the web uses the optimized copies in public/)
+scripts/source-images/
+
+# Source demo videos (originals for the clips in public/video)
+videos/*.mp4
+
+.vercel
+.env*
+
+# Working material kept out of the public repo (reference kit, design handoff, tooling state)
+portafolio-libro-kit/
+portfolio-redesign-handoff/
+.atl/
