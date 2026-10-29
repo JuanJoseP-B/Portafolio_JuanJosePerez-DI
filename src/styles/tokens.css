@@ -1,0 +1,17 @@
+:root{
+--void:#05060a;--surface:#0d1018;--surface-raised:#161a26;
+--glass:rgba(255,255,255,.06);--glass-border:rgba(255,255,255,.14);
+--ink:#f4f6fb;--muted:#9aa3b5;--accent:#5ce1e6;--accent-warm:#ffb547;
+--paper:#ece4d2;--paper-white:#f7f5ef;--paper-ink:#1b1813;--paper-muted:#5e564a;--cover:#12151f;
+--font-display:"Space Grotesk",system-ui,sans-serif;--font-serif:"Instrument Serif",Georgia,serif;
+--font-sans:"Inter",system-ui,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,monospace;
+--space-2:8px;--space-4:16px;--space-6:24px;--space-10:40px;
+--radius-sm:6px;--radius-md:12px;--radius-xl:24px;
+--glow-accent:0 0 24px rgba(92,225,230,.35);--glass-shadow:0 8px 32px rgba(0,0,0,.5);
+/* Text-version additions (design handoff "Bitácora de ingeniero") */
+--accent-hover:#b8f6fa;--success:#7ee2a8;--keycap-shadow:#0a0c12;
+--border:rgba(255,255,255,.14);--border-soft:rgba(255,255,255,.10);--divider:rgba(255,255,255,.08);
+--grid-major:rgba(92,225,230,.07);--grid-minor:rgba(92,225,230,.035);--highlight:rgba(255,181,71,.65);
+--note-shadow:0 12px 28px rgba(0,0,0,.45);
+--container:1200px;--gutter:clamp(16px,4vw,40px);--section-y:120px;
+}

@@ -1,0 +1,324 @@
+{
+  "0": [],
+  "1": [
+    {
+      "id": "goto-1-1",
+      "action": "goto",
+      "page": 1,
+      "href": null,
+      "x": 110,
+      "y": 500,
+      "w": 622,
+      "h": 87
+    },
+    {
+      "id": "goto-2-2",
+      "action": "goto",
+      "page": 2,
+      "href": null,
+      "x": 110,
+      "y": 587,
+      "w": 622,
+      "h": 87
+    },
+    {
+      "id": "goto-2-3",
+      "action": "goto",
+      "page": 2,
+      "href": null,
+      "x": 110,
+      "y": 674,
+      "w": 622,
+      "h": 87
+    },
+    {
+      "id": "goto-3-4",
+      "action": "goto",
+      "page": 3,
+      "href": null,
+      "x": 110,
+      "y": 761,
+      "w": 622,
+      "h": 87
+    },
+    {
+      "id": "goto-3-5",
+      "action": "goto",
+      "page": 3,
+      "href": null,
+      "x": 110,
+      "y": 848,
+      "w": 622,
+      "h": 87
+    },
+    {
+      "id": "goto-5-6",
+      "action": "goto",
+      "page": 5,
+      "href": null,
+      "x": 788,
+      "y": 500,
+      "w": 622,
+      "h": 87
+    },
+    {
+      "id": "goto-6-7",
+      "action": "goto",
+      "page": 6,
+      "href": null,
+      "x": 788,
+      "y": 587,
+      "w": 622,
+      "h": 87
+    },
+    {
+      "id": "goto-7-8",
+      "action": "goto",
+      "page": 7,
+      "href": null,
+      "x": 788,
+      "y": 674,
+      "w": 622,
+      "h": 87
+    },
+    {
+      "id": "goto-8-9",
+      "action": "goto",
+      "page": 8,
+      "href": null,
+      "x": 788,
+      "y": 761,
+      "w": 622,
+      "h": 87
+    },
+    {
+      "id": "goto-10-10",
+      "action": "goto",
+      "page": 10,
+      "href": null,
+      "x": 788,
+      "y": 848,
+      "w": 622,
+      "h": 87
+    }
+  ],
+  "2": [
+    {
+      "id": "cv",
+      "action": "download",
+      "page": null,
+      "href": "/cv/JuanJose-CV.pdf",
+      "x": 150,
+      "y": 968,
+      "w": 300,
+      "h": 76
+    }
+  ],
+  "3": [],
+  "4": [],
+  "5": [
+    {
+      "id": "goto-4",
+      "action": "goto",
+      "page": 4,
+      "href": null,
+      "x": 110,
+      "y": 490,
+      "w": 1300,
+      "h": 129
+    },
+    {
+      "id": "goto-5",
+      "action": "goto",
+      "page": 5,
+      "href": null,
+      "x": 110,
+      "y": 619,
+      "w": 1300,
+      "h": 129
+    },
+    {
+      "id": "goto-6",
+      "action": "goto",
+      "page": 6,
+      "href": null,
+      "x": 110,
+      "y": 748,
+      "w": 1300,
+      "h": 129
+    }
+  ],
+  "6": [
+    {
+      "id": "argos-github",
+      "action": "link",
+      "page": null,
+      "href": "https://github.com/JuanJoseP-B/APP-ESCRITORIO-MESA_DE_CRISIS-Di.git",
+      "x": 150,
+      "y": 910,
+      "w": 185,
+      "h": 62
+    },
+    {
+      "id": "argos-demo",
+      "action": "link",
+      "page": null,
+      "href": "https://app-escritorio-mesadecrisis-di.vercel.app/",
+      "x": 355,
+      "y": 910,
+      "w": 264,
+      "h": 62
+    }
+  ],
+  "7": [
+    {
+      "id": "video-argos",
+      "action": "video",
+      "page": null,
+      "href": null,
+      "x": 112,
+      "y": 403,
+      "w": 1286,
+      "h": 607
+    }
+  ],
+  "8": [
+    {
+      "id": "argos-github-2",
+      "action": "link",
+      "page": null,
+      "href": "https://github.com/JuanJoseP-B/APP-ESCRITORIO-MESA_DE_CRISIS-Di.git",
+      "x": 150,
+      "y": 880,
+      "w": 185,
+      "h": 62
+    },
+    {
+      "id": "argos-demo-2",
+      "action": "link",
+      "page": null,
+      "href": "https://app-escritorio-mesadecrisis-di.vercel.app/",
+      "x": 355,
+      "y": 880,
+      "w": 264,
+      "h": 62
+    }
+  ],
+  "9": [
+    {
+      "id": "video-segundoaire",
+      "action": "video",
+      "page": null,
+      "href": null,
+      "x": 798,
+      "y": 363,
+      "w": 324,
+      "h": 614
+    }
+  ],
+  "10": [
+    {
+      "id": "segundoaire-github",
+      "action": "link",
+      "page": null,
+      "href": "https://github.com/JuanJoseP-B/SegundoAire-PrMobile-DI.git",
+      "x": 150,
+      "y": 910,
+      "w": 185,
+      "h": 62
+    },
+    {
+      "id": "segundoaire-demo",
+      "action": "link",
+      "page": null,
+      "href": "https://segundoaire-demo.vercel.app/",
+      "x": 355,
+      "y": 910,
+      "w": 264,
+      "h": 62
+    }
+  ],
+  "11": [
+    {
+      "id": "video-arcofisio",
+      "action": "video",
+      "page": null,
+      "href": null,
+      "x": 622,
+      "y": 192,
+      "w": 790,
+      "h": 790
+    }
+  ],
+  "12": [
+    {
+      "id": "arcofisio-github",
+      "action": "link",
+      "page": null,
+      "href": "https://github.com/JuanJoseP-B/ArcoFisio-PROY-SMARTWATHC-DI.git",
+      "x": 150,
+      "y": 920,
+      "w": 185,
+      "h": 62
+    },
+    {
+      "id": "arcofisio-demo",
+      "action": "link",
+      "page": null,
+      "href": "https://arco-fisio-proy-smartwathc-di.vercel.app/",
+      "x": 355,
+      "y": 920,
+      "w": 264,
+      "h": 62
+    }
+  ],
+  "13": [],
+  "14": [],
+  "15": [],
+  "16": [],
+  "17": [],
+  "18": [],
+  "19": [],
+  "20": [
+    {
+      "id": "email",
+      "action": "link",
+      "page": null,
+      "href": "mailto:jjperezbravo123@gmail.com",
+      "x": 120,
+      "y": 512,
+      "w": 700,
+      "h": 55
+    },
+    {
+      "id": "linkedin",
+      "action": "link",
+      "page": null,
+      "href": "https://www.linkedin.com/in/juan-josé-pérez-819160424",
+      "x": 120,
+      "y": 623,
+      "w": 700,
+      "h": 81
+    },
+    {
+      "id": "github",
+      "action": "link",
+      "page": null,
+      "href": "https://github.com/JuanJoseP-B",
+      "x": 120,
+      "y": 728,
+      "w": 700,
+      "h": 81
+    },
+    {
+      "id": "contact-form",
+      "action": "form",
+      "page": null,
+      "href": null,
+      "x": 880,
+      "y": 440,
+      "w": 610,
+      "h": 520
+    }
+  ]
+}

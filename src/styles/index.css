@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background: #05060a;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    /* Every CSS transition and animation (overlay, loader, hotspot layer) becomes instant. */
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
+    }
+  }
+
+  body {
+    @apply bg-void font-sans text-ink antialiased;
+    margin: 0;
+    /* The canvas is fixed full-screen; the text version scrolls inside its own container. */
+    overflow: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.accent');
+    outline-offset: 2px;
+  }
+
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@layer components {
+  /* Visible marker for content still pending from the author. */
+  .placeholder {
+    outline: 1px dashed rgba(154, 163, 181, 0.8);
+    outline-offset: 2px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 2px;
+    padding: 0 0.2em;
+    color: theme('colors.muted');
+  }
+
+  .link {
+    @apply text-accent underline decoration-accent/40 underline-offset-4 transition-colors;
+  }
+
+  .link:hover {
+    @apply decoration-accent;
+  }
+
+  .chip {
+    @apply inline-block rounded-sm border border-glass-border bg-glass px-2 py-1 font-mono text-xs text-ink;
+  }
+
+  /* Blueprint grid behind the hero and the contact section of the text version. */
+  .blueprint {
+    background-image:
+      linear-gradient(var(--grid-major) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+      linear-gradient(var(--grid-minor) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+    background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px;
+  }
+
+  /* Highlighter underline on the paper block. */
+  .marker {
+    background: linear-gradient(transparent 62%, var(--highlight) 62%);
+  }
+
+  /* A pending [PLACEHOLDER] on a paper surface needs dark ink to stay readable. */
+  .on-paper .placeholder {
+    color: var(--paper-muted);
+    background: rgba(27, 24, 19, 0.06);
+    outline-color: rgba(27, 24, 19, 0.55);
+  }
+}
