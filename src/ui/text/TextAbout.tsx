@@ -92,7 +92,8 @@ export function TextHello({ active }: { active: boolean }) {
             data-anim="build-fill"
             role="img"
             aria-label={`Semestre ${current} de ${total}`}
-            className="grid grid-cols-10 gap-1"
+            className="grid gap-1"
+            style={{ gridTemplateColumns: `repeat(${total}, minmax(0, 1fr))` }}
           >
             {Array.from({ length: total }, (_, i) => (
               <span

@@ -99,3 +99,9 @@ Rediseñar **solo** la versión texto (`src/ui/A11yContent.tsx`, la vista a la q
 4. Formulario terminal: envío simulado; el del libro (contraportada) sigue igual.
 5. Hamburguesa en móvil y "Volver arriba" en el pie.
 6. Decidir si el escenario de video debe volver a 16:9 (más fiel a la referencia, teléfono más pequeño).
+
+## Ajuste posterior: 8 semestres, apertura arriba y scroll suave
+- **8 semestres:** `person.semester.total` pasó de 10 a 8 en `portfolio.ts` (5 de 8). `TextAbout` ya derivaba etiqueta, barra y porcentaje de ese total; solo se cambió la rejilla fija `grid-cols-10` por columnas calculadas (`repeat(total, …)`). Resultado: "Quinto de ocho", 5 celdas llenas de 8, "compilando… 63%". El libro no muestra el total (solo "Quinto Semestre"), así que no se tocaron caras ni texturas.
+- **Apertura arriba:** `A11yContent` hace `scrollTop = 0` en un `useLayoutEffect` cada vez que `visible` pasa a true (y al montarse como respaldo sin WebGL), antes del pintado.
+- **Scroll suave:** manejador delegado de `click` en el contenedor de scroll para `a[href^="#"]` (solo con la versión texto visible): `preventDefault`, búsqueda acotada por `[id="…"]` (sirve para `proyectos/argos`), `scrollTo` suave (instantáneo con `prefers-reduced-motion`), descuenta el navbar pegajoso (`HEADER_OFFSET` = 104 px) y el padding superior de la sección, y mueve el foco con `preventScroll`. No cambia `location.hash`, así que el libro de fondo no gira. El menú hamburguesa se cierra con su propio `onClick`. Los enlaces `mailto:` y externos no se interceptan; "Volver arriba" usa el mismo desplazamiento suave.
+- No verificado en navegador: la sensación del desplazamiento y que el título quede bien situado bajo el navbar en cada sección.

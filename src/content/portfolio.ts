@@ -156,7 +156,7 @@ export const portfolio: Portfolio = {
     city: 'Pasto, Nariño',
     coordinates: { lat: '1.2136° N', lon: '77.2811° O' },
     timeZone: 'America/Bogota',
-    semester: { current: 5, total: 10 },
+    semester: { current: 5, total: 8 },
     bioMarkers: ['arquitecturas limpias', 'bases de datos relacionales', 'documentación impecable'],
   },
 
