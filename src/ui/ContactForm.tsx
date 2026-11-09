@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
+import { useLanguage } from '../store/useLanguage';
 
 type Variant = 'page' | 'book' | 'terminal';
 
@@ -65,13 +66,18 @@ const LABELS: Record<Variant, { name: string; email: string; message: string; su
  * sheet and the text version (`page` / `terminal`). Submission is simulated: nothing is sent anywhere.
  */
 export function ContactForm({ className = '', variant = 'page' }: { className?: string; variant?: Variant }) {
+  const { lang } = useLanguage();
   const uid = useId();
   const [sentName, setSentName] = useState<string | null>(null);
   const s = STYLES[variant];
   const book = variant === 'book';
   const terminal = variant === 'terminal';
-  const labels = LABELS[variant];
-  const placeholders = PLACEHOLDERS[variant];
+  const labels = lang === 'en' && variant !== 'terminal'
+    ? { name: 'Name', email: 'Email', message: 'Message', submit: 'Send message' }
+    : LABELS[variant];
+  const placeholders = lang === 'en'
+    ? { name: 'Your name', email: 'you@example.com', message: 'How can I help you?' }
+    : PLACEHOLDERS[variant];
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -142,7 +148,7 @@ export function ContactForm({ className = '', variant = 'page' }: { className?: 
         {labels.submit}
       </button>
       <p role="status" aria-live="polite" className={s.status}>
-        {sentName !== null && `¡Gracias${sentName ? `, ${sentName}` : ''}! Tu mensaje fue enviado.`}
+        {sentName !== null && (lang === 'en' ? 'This form is a demonstration; no message was sent.' : 'Este formulario es una demostración; no se envió ningún mensaje.')}
       </p>
     </>
   );
@@ -152,7 +158,7 @@ export function ContactForm({ className = '', variant = 'page' }: { className?: 
       onSubmit={onSubmit}
       onChange={() => sentName !== null && setSentName(null)}
       className={`${s.form} ${className}`}
-      aria-label="Formulario de contacto"
+      aria-label={lang === 'en' ? 'Contact form' : 'Formulario de contacto'}
     >
       {terminal ? (
         <>

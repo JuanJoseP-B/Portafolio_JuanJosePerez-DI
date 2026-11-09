@@ -128,9 +128,10 @@ export interface BookTextures {
 }
 
 /** Null when the manifest is missing (e.g. nothing exported yet) or the dev server answered with HTML. */
-async function fetchManifest(): Promise<PagesManifest | null> {
+async function fetchManifest(lang: 'es' | 'en'): Promise<PagesManifest | null> {
   try {
-    const res = await fetch(`${PAGES_MANIFEST_URL}?t=${Date.now()}`, { cache: 'no-store' });
+    const url = lang === 'en' ? PAGES_MANIFEST_URL.replace('/manifest.json', '/en/manifest.json') : PAGES_MANIFEST_URL;
+    const res = await fetch(`${url}?t=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok || !(res.headers.get('content-type') ?? '').includes('json')) return null;
     const data = (await res.json()) as PagesManifest;
     return Array.isArray(data?.faces) ? data : null;
@@ -176,7 +177,7 @@ function swapImage(
  * `mobile` loads the 800x550 images as the base and, while zoomed in, the regular 1600x1100 ones in place
  * of the 2x ones (the sharper step on a phone), so a phone never holds more than a few large textures.
  */
-export function createBookTextures(maxAnisotropy: number, mobile = false): BookTextures {
+export function createBookTextures(maxAnisotropy: number, mobile = false, lang: 'es' | 'en' = 'es'): BookTextures {
   const loader = new TextureLoader();
   let disposed = false;
 
@@ -210,7 +211,7 @@ export function createBookTextures(maxAnisotropy: number, mobile = false): BookT
   const loadHi = (id: number, tex: Texture) => {
     hiState[id] = 'loading';
     loader.load(
-      mobile ? pageFileUrl(id, manifestInfo?.version ?? 0) : pageFile2xUrl(id, manifestInfo?.version ?? 0),
+      mobile ? pageFileUrl(id, manifestInfo?.version ?? 0, lang) : pageFile2xUrl(id, manifestInfo?.version ?? 0, lang),
       (loaded) => {
         if (disposed || !hiWanted[id]) {
           loaded.dispose();
@@ -279,8 +280,8 @@ export function createBookTextures(maxAnisotropy: number, mobile = false): BookT
   };
 
   // Upgrade placeholders to the exported images listed in the manifest.
-  const baseUrl = (id: number, version: number) => (mobile ? pageFileMobileUrl(id, version) : pageFileUrl(id, version));
-  void fetchManifest().then((manifest) => {
+  const baseUrl = (id: number, version: number) => (mobile ? pageFileMobileUrl(id, version, lang) : pageFileUrl(id, version, lang));
+  void fetchManifest(lang).then((manifest) => {
     if (disposed) return;
     if (!manifest) {
       reportManifest(0); // nothing exported: keep the placeholders and let the loader finish
@@ -300,7 +301,7 @@ export function createBookTextures(maxAnisotropy: number, mobile = false): BookT
       }
     }
     if (manifest.backCover) {
-      const url = mobile ? backCoverMobileUrl(manifest.version) : backCoverFileUrl(manifest.version);
+      const url = mobile ? backCoverMobileUrl(manifest.version, lang) : backCoverFileUrl(manifest.version, lang);
       swapImage(loader, backCover, url, maxAnisotropy, isDisposed);
     }
   });

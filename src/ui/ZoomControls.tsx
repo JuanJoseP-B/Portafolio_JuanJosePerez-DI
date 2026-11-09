@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, RotateCcw, ZoomIn, ZoomOut } from 'lucide-re
 import { resetZoom, zoomStep } from '../scene/zoomActions';
 import { BUTTON_ZOOM_STEP, ZOOM_CLICK_BLOCK, ZOOM_MAX, ZOOM_MIN, subscribeZoom, zoomState } from '../scene/zoomCamera';
 import { useBook } from '../store/useBook';
+import { useLanguage } from '../store/useLanguage';
 
 // Snapshots are primitives, so React re-renders only when the shown value (0.1x steps) or a threshold changes.
 const levelSnapshot = () => Math.round(zoomState.level * 10) / 10;
@@ -13,6 +14,7 @@ const glassButton =
 
 /** Zoom level, +/- and reset (bottom right) plus side arrows to turn pages while zoomed in. */
 export function ZoomControls() {
+  const lang = useLanguage((s) => s.lang);
   const page = useBook((s) => s.page);
   const next = useBook((s) => s.next);
   const prev = useBook((s) => s.prev);
@@ -31,7 +33,7 @@ export function ZoomControls() {
       >
         <button
           type="button"
-          aria-label="Alejar"
+          aria-label={lang === 'en' ? 'Zoom out' : 'Alejar'}
           className={glassButton}
           disabled={level <= ZOOM_MIN}
           onClick={() => zoomStep(1 / BUTTON_ZOOM_STEP)}
@@ -46,7 +48,7 @@ export function ZoomControls() {
         </span>
         <button
           type="button"
-          aria-label="Acercar"
+          aria-label={lang === 'en' ? 'Zoom in' : 'Acercar'}
           className={glassButton}
           disabled={level >= ZOOM_MAX}
           onClick={() => zoomStep(BUTTON_ZOOM_STEP)}
@@ -55,7 +57,7 @@ export function ZoomControls() {
         </button>
         <button
           type="button"
-          aria-label="Restablecer zoom"
+          aria-label={lang === 'en' ? 'Reset zoom' : 'Restablecer zoom'}
           className={glassButton}
           disabled={level <= ZOOM_MIN}
           onClick={resetZoom}
@@ -68,7 +70,7 @@ export function ZoomControls() {
         <>
           <button
             type="button"
-            aria-label="Página anterior"
+            aria-label={lang === 'en' ? 'Previous page' : 'Página anterior'}
             className={`${glassButton} absolute left-3 top-1/2 h-12 w-12 -translate-y-1/2 sm:left-6`}
             disabled={page <= 1}
             onClick={prev}
@@ -77,7 +79,7 @@ export function ZoomControls() {
           </button>
           <button
             type="button"
-            aria-label="Página siguiente"
+            aria-label={lang === 'en' ? 'Next page' : 'Página siguiente'}
             className={`${glassButton} absolute right-3 top-1/2 h-12 w-12 -translate-y-1/2 sm:right-6`}
             disabled={page >= 9}
             onClick={next}

@@ -1,4 +1,4 @@
-import { portfolio } from '../../content/portfolio';
+import { portfolio } from '../locale';
 import { PageFrame } from '../PageFrame';
 import { Folio, PageHeader, initials } from '../parts';
 

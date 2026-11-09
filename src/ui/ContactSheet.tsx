@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { useBook } from '../store/useBook';
+import { useLanguage } from '../store/useLanguage';
 import { ContactForm } from './ContactForm';
 
 /**
@@ -10,6 +11,7 @@ import { ContactForm } from './ContactForm';
 export function ContactSheet() {
   const open = useBook((s) => s.contactOpen);
   const setOpen = useBook((s) => s.setContactOpen);
+  const { lang } = useLanguage();
   const dialog = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,7 +34,6 @@ export function ContactSheet() {
         className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-xl border border-glass-border bg-surface p-5 shadow-glass outline-none sm:rounded-xl"
         onClick={(event) => event.stopPropagation()}
         onKeyDown={(event) => {
-          // Stop it here so the book's own Escape handler (close the book) does not also run.
           if (event.key === 'Escape') {
             event.preventDefault();
             event.stopPropagation();
@@ -42,11 +43,11 @@ export function ContactSheet() {
       >
         <div className="mb-4 flex items-center justify-between gap-4">
           <h2 id="contact-sheet-title" className="font-display text-2xl font-semibold text-ink">
-            Escríbeme
+            {lang === 'en' ? 'Get in touch' : 'Escríbeme'}
           </h2>
           <button
             type="button"
-            aria-label="Cerrar formulario"
+            aria-label={lang === 'en' ? 'Close form' : 'Cerrar formulario'}
             onClick={() => setOpen(false)}
             className="grid h-11 w-11 place-items-center rounded-pill border border-glass-border bg-glass text-ink transition-colors hover:border-white/30"
           >

@@ -28,8 +28,10 @@ import sharp from 'sharp';
 import { BACK_COVER_ID, DESIGNED_FACE_IDS, FACE_SIZE } from '../src/pages-design/faceIds';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT_DIR = path.join(ROOT, 'public', 'textures', 'pages');
-const HOTSPOTS_SRC = path.join(ROOT, 'src', 'lib', 'hotspots.generated.json');
+const langArg = process.argv.find((value) => value.startsWith('--lang='))?.slice(7) ?? 'es';
+if (langArg !== 'es' && langArg !== 'en') throw new Error('--lang must be es or en');
+const OUT_DIR = path.join(ROOT, 'public', 'textures', 'pages', ...(langArg === 'en' ? ['en'] : []));
+const HOTSPOTS_SRC = path.join(ROOT, 'src', 'lib', langArg === 'en' ? 'hotspots.en.generated.json' : 'hotspots.generated.json');
 const DEFAULT_URL = 'http://localhost:5173';
 const FALLBACK_PORT = 5199;
 
@@ -122,7 +124,13 @@ async function main() {
   const { base, stop } = await ensureServer();
   console.log(`Exporting faces [${faces.join(', ')}] at ${scales.map((s) => `${s}x`).join(' + ')} from ${base}`);
 
-  const browser = await chromium.launch();
+  let browser: Awaited<ReturnType<typeof chromium.launch>>;
+  try {
+    browser = await chromium.launch().catch(() => chromium.launch({ channel: 'chrome' }));
+  } catch (error) {
+    stop();
+    throw error;
+  }
   const hotspotsByFace: Record<string, Hotspot[]> = {};
   const hiresExported: number[] = [];
 
@@ -137,7 +145,7 @@ async function main() {
 
       const ids = scale === 1 ? faces : faces.filter((id) => !HIRES_SKIP.has(id));
       for (const id of ids) {
-        await page.goto(`${base}/__pages?n=${id}`, { waitUntil: 'domcontentloaded', timeout: 90_000 });
+        await page.goto(`${base}/__pages?n=${id}&lang=${langArg}`, { waitUntil: 'domcontentloaded', timeout: 90_000 });
         const frame = page.locator('[data-page-frame][data-ready="true"]');
         await frame.waitFor({ timeout: 90_000 });
 

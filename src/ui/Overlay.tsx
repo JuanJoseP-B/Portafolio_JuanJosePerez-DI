@@ -1,20 +1,25 @@
-import { portfolio, ui } from '../content/portfolio';
+import { getPortfolio, getUi } from '../content/portfolio';
 import { useEntered } from '../lib/loadProgress';
 import { useBook } from '../store/useBook';
+import { useLanguage } from '../store/useLanguage';
 import { Placeholder as T } from './Placeholder';
 import { FaceNav } from './FaceNav';
+import { LanguageButton } from './LanguageButton';
 import { TextVersionButton } from './TextVersionButton';
 import { Navbar } from './Navbar';
 import { ZoomControls } from './ZoomControls';
 
-const { person } = portfolio;
 
 /** 2D layer over the canvas: navbar, hero title (closed book), zoom controls, one-page face buttons and the text-version button. */
 export function Overlay({ onToggleText }: { onToggleText: () => void }) {
   const closed = useBook((s) => s.page === 0);
+  const compact = useBook((s) => s.compact);
   // The title appears after the book has dollied in (the loader's fade-out starts that).
   const entered = useEntered();
   const showHero = closed && entered;
+  const { lang } = useLanguage();
+  const { person } = getPortfolio(lang);
+  const t = getUi(lang);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-30">
@@ -32,7 +37,7 @@ export function Overlay({ onToggleText }: { onToggleText: () => void }) {
           <br />
           <T>{person.heroTitle[1]}</T>
         </p>
-        <p className="mt-4 text-[13px] text-muted">{ui.hint}</p>
+        <p className="mt-4 text-[13px] text-muted">{t.hint}</p>
         {person.cvAvailable ? (
           <a
             href={person.cv}
@@ -42,15 +47,15 @@ export function Overlay({ onToggleText }: { onToggleText: () => void }) {
               closed ? 'pointer-events-auto' : 'pointer-events-none'
             }`}
           >
-            {ui.downloadCv} (PDF)
+            {t.downloadCv} (PDF)
           </a>
         ) : (
           <span
             aria-disabled="true"
-            title="El PDF del CV aún no está disponible"
+            title={lang === 'en' ? 'The CV PDF is not available yet' : 'El PDF del CV aún no está disponible'}
             className="mt-5 inline-block rounded-pill border border-dashed border-accent-warm px-4 py-2 font-mono text-xs uppercase tracking-[0.08em] text-accent-warm"
           >
-            {ui.downloadCv} · [CV PRÓXIMAMENTE]
+            {t.downloadCv} · {lang === 'en' ? '[CV COMING SOON]' : '[CV PRÓXIMAMENTE]'}
           </span>
         )}
       </div>
@@ -59,7 +64,17 @@ export function Overlay({ onToggleText }: { onToggleText: () => void }) {
 
       <FaceNav />
 
-      <TextVersionButton onToggleText={onToggleText} />
+      {/* Language + Text-version buttons, grouped at the same corner */}
+      <div
+        className={`pointer-events-none absolute flex items-center gap-2 ${
+          compact
+            ? 'bottom-[4.5rem] left-4'
+            : 'bottom-4 right-4 sm:bottom-6 sm:right-10'
+        }`}
+      >
+        <LanguageButton />
+        <TextVersionButton onToggleText={onToggleText} />
+      </div>
     </div>
   );
 }

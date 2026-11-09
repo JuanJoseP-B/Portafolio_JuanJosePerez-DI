@@ -7,6 +7,10 @@ import { A11yContent } from './ui/A11yContent';
 import { ContactSheet } from './ui/ContactSheet';
 import { DebugHud } from './ui/DebugHud';
 import { Loader } from './ui/Loader';
+import { LoadingSkeleton } from './ui/LoadingSkeleton';
+import { useLoadReady } from './lib/loadProgress';
+import { motion } from './lib/motion';
+import { createWindowScheduler, scheduleTransitionReveal, transitionTimings } from './lib/loadingMotion';
 import { Overlay } from './ui/Overlay';
 import { ContextLostNotice, FallbackNotice } from './ui/SceneNotices';
 
@@ -19,6 +23,28 @@ export default function App() {
   const [status, setStatus] = useState<'ok' | 'unsupported' | 'error'>(() => (hasWebGL() ? 'ok' : 'unsupported'));
   const [attempt, setAttempt] = useState(0); // bumping it remounts the scene (retry)
   const [contextLost, setContextLost] = useState(false);
+  const [switching, setSwitching] = useState<'idle' | 'covered' | 'leaving'>('idle');
+  const ready = useLoadReady();
+
+  // Keep the destination covered through its first paint and a brief, bounded transition.
+  // A not-yet-ready book is covered by Loader instead, which follows actual scene readiness.
+  useEffect(() => {
+    if (switching !== 'covered') return;
+    const { hold } = transitionTimings(motion.reduced);
+    return scheduleTransitionReveal(createWindowScheduler(window), hold, () => setSwitching('leaving'));
+  }, [switching, textMode]);
+
+  useEffect(() => {
+    if (switching !== 'leaving') return;
+    const timer = window.setTimeout(() => setSwitching('idle'), transitionTimings(motion.reduced).fade);
+    return () => window.clearTimeout(timer);
+  }, [switching]);
+
+  const switchMode = (text: boolean) => {
+    if (text === textMode) return;
+    setTextMode(text);
+    setSwitching(!motion.reduced && (text || ready) ? 'covered' : 'idle');
+  };
 
   useEffect(() => initHashSync(), []);
   useCompactMode();
@@ -53,10 +79,18 @@ export default function App() {
           </Suspense>
         </SceneBoundary>
       </div>
-      <Overlay onToggleText={() => setTextMode(true)} />
+      <Overlay onToggleText={() => switchMode(true)} />
       <ContactSheet />
-      <A11yContent visible={textMode} onClose={() => setTextMode(false)} />
-      <Loader hidden={textMode} onSkipToText={() => setTextMode(true)} />
+      <A11yContent visible={textMode} onClose={() => switchMode(false)} />
+      <Loader hidden={textMode} onSkipToText={() => switchMode(true)} />
+      {switching !== 'idle' && (
+        <div
+          className="fixed inset-0 z-[75] pointer-events-none"
+          style={{ opacity: switching === 'leaving' ? 0 : 1, transition: `opacity ${transitionTimings(motion.reduced).fade}ms ease` }}
+        >
+          <LoadingSkeleton mode={textMode ? 'text' : 'book'} />
+        </div>
+      )}
       {contextLost && (
         <ContextLostNotice
           onRetry={() => {
@@ -65,7 +99,7 @@ export default function App() {
           }}
           onText={() => {
             setContextLost(false);
-            setTextMode(true);
+            switchMode(true);
           }}
         />
       )}

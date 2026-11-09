@@ -1,4 +1,5 @@
 import generated from './hotspots.generated.json';
+import generatedEn from './hotspots.en.generated.json';
 
 /**
  * Interactive rectangles of every book face, in the 1600x1100 face space. They are measured from the
@@ -19,5 +20,7 @@ export interface Hotspot {
 }
 
 const byFace = generated as unknown as Record<string, Hotspot[]>;
+const byFaceEn = generatedEn as unknown as Record<string, Hotspot[]>;
 
-export const hotspotsForFace = (face: number): readonly Hotspot[] => byFace[String(face)] ?? [];
+export const hotspotsForFace = (face: number, lang: 'es' | 'en' = 'es'): readonly Hotspot[] =>
+  (lang === 'en' ? byFaceEn : byFace)[String(face)] ?? [];

@@ -18,6 +18,7 @@ import {
   flippedCountFor,
 } from './bookLayout';
 import { COVER_COLOR, PAPER_COLOR, createBookTextures } from './bookTextures';
+import { useLanguage, type Lang } from '../store/useLanguage';
 import { BEND_WEIGHTS, createLeafRig, type LeafRig } from './leafRig';
 import { enableShadows } from './textures';
 import type { V3 } from './types';
@@ -137,8 +138,8 @@ function updateSpine(mesh: Mesh | null, flippedSum: number): void {
   mesh.position.set(0, BLOCK_BOTTOM + radius, 0);
 }
 
-function createAssets(maxAnisotropy: number, mobile: boolean) {
-  const textures = createBookTextures(maxAnisotropy, mobile);
+function createAssets(maxAnisotropy: number, mobile: boolean, lang: Lang) {
+  const textures = createBookTextures(maxAnisotropy, mobile, lang);
   const materials: Material[] = [];
   const material = (params: ConstructorParameters<typeof MeshStandardMaterial>[0]) => {
     const m = new MeshStandardMaterial(params);
@@ -184,6 +185,7 @@ function createAssets(maxAnisotropy: number, mobile: boolean) {
 
 /** The interactive book: covers, leaves with bones, page blocks, spine, hover / click / keyboard. */
 export function Book() {
+  const lang = useLanguage((s) => s.lang);
   const gl = useThree((s) => s.gl);
   const page = useBook((s) => s.page);
   const hoveredSide = useBook((s) => s.hoveredSide);
@@ -194,7 +196,7 @@ export function Book() {
   useBookKeys();
 
   // Phones start with the light textures; rotating the device later keeps whatever was loaded.
-  const assets = useMemo(() => createAssets(gl.capabilities.getMaxAnisotropy(), useBook.getState().compact), [gl]);
+  const assets = useMemo(() => createAssets(gl.capabilities.getMaxAnisotropy(), useBook.getState().compact, lang), [gl, lang]);
   useEffect(() => () => assets.dispose(), [assets]);
 
   // Sharper 2x faces for the visible spread while zoomed in; released when zooming back out.
@@ -212,7 +214,8 @@ export function Book() {
   }, [assets]);
 
   // Initial state comes from the hash, so a deep link starts already flipped (no animation).
-  const initialFlipped = useMemo(() => flippedCountFor(useBook.getState().target), []);
+  // Rebuilding the language-specific materials must preserve the current spread.
+  const initialFlipped = useMemo(() => flippedCountFor(useBook.getState().target), [assets]);
   const initialLayout = layoutFor(initialFlipped);
   const anim = useMemo(
     () =>

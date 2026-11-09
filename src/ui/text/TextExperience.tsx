@@ -1,27 +1,36 @@
-import { portfolio } from '../../content/portfolio';
+import { getPortfolio, getTr } from '../../content/portfolio';
 import type { LogEntry } from '../../content/portfolio';
+import { useLanguage } from '../../store/useLanguage';
 import { Placeholder as T } from '../Placeholder';
 import { CONTAINER, Serif, SectionHead } from './shared';
 
-const { log } = portfolio;
-
-const KIND_LABEL: Record<LogEntry['kind'], string> = {
-  academic: 'Experiencia académica',
-  work: 'Experiencia laboral / práctica competitiva',
+const KIND_LABEL: Record<string, Record<LogEntry['kind'], string>> = {
+  es: {
+    academic: 'Experiencia académica',
+    work: 'Experiencia laboral / práctica competitiva',
+  },
+  en: {
+    academic: 'Academic experience',
+    work: 'Professional / competitive experience',
+  },
 };
 
 /** "git log --mi-camino": academic and work history as a vertical commit graph. */
 export function TextExperience() {
+  const { lang } = useLanguage();
+  const log = getPortfolio(lang).log;
+  const tr = getTr(lang);
+
   return (
     <section
       id="experiencia"
       aria-labelledby="experiencia-title"
       className={`${CONTAINER} flex flex-col gap-12 py-[120px]`}
     >
-      <SectionHead id="experiencia-title" counter="04 / 06">
-        git log <Serif>--mi-camino</Serif>
+      <SectionHead id="experiencia-title" counter={tr.textExperience.counter}>
+        {tr.textExperience.logTitle} <Serif>{tr.textExperience.title}</Serif>
       </SectionHead>
-      <p className="sr-only">Experiencia académica y laboral, de lo más reciente a lo más antiguo.</p>
+      <p className="sr-only">{lang === 'en' ? 'Academic and professional experience, from most recent to oldest.' : 'Experiencia académica y laboral, de lo más reciente a lo más antiguo.'}</p>
 
       <ol data-anim="graph-draw" className="m-0 flex list-none flex-col p-0">
         {log.map((entry) => (
@@ -45,7 +54,7 @@ export function TextExperience() {
                 <span className="text-accent">{entry.branch}</span>
               </div>
               <span className="font-display text-[22px] font-semibold">
-                <span className="sr-only">{KIND_LABEL[entry.kind]}: </span>
+                <span className="sr-only">{KIND_LABEL[lang][entry.kind]}: </span>
                 {entry.message}
               </span>
               <span className="text-sm leading-[1.55] text-muted">

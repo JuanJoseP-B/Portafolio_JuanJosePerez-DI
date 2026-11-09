@@ -1,4 +1,4 @@
-import { portfolio, ui } from '../../content/portfolio';
+import { portfolio, ui } from '../locale';
 import type { IndexEntry } from '../faceIds';
 import { PageFrame } from '../PageFrame';
 import { Folio, PageHeader } from '../parts';

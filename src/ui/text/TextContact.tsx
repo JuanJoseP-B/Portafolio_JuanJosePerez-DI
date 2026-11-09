@@ -1,11 +1,14 @@
-import { portfolio } from '../../content/portfolio';
+import { getPortfolio, getTr } from '../../content/portfolio';
+import { useLanguage } from '../../store/useLanguage';
 import { ContactForm } from '../ContactForm';
 import { H2, Serif } from './shared';
 
-const { contact } = portfolio;
-
 /** "Hagamos un commit juntos.": email, signature and the terminal-style contact form. */
 export function TextContact() {
+  const { lang } = useLanguage();
+  const contact = getPortfolio(lang).contact;
+  const tr = getTr(lang);
+
   return (
     <section
       id="contacto"
@@ -14,9 +17,9 @@ export function TextContact() {
     >
       <div className="mx-auto flex max-w-[1200px] flex-wrap gap-12 px-[clamp(16px,4vw,40px)] py-[120px]">
         <div className="flex min-w-0 flex-[1_1_380px] flex-col gap-5">
-          <span className="font-mono text-xs text-accent">06 / 06 · CONTACTO</span>
+          <span className="font-mono text-xs text-accent">{tr.textContact.counter} · {tr.textContact.title.toUpperCase()}</span>
           <h2 id="contacto-title" className={H2}>
-            Hagamos <Serif>un commit</Serif> juntos.
+            {lang === 'en' ? 'Let us make' : 'Hagamos'} <Serif>{lang === 'en' ? 'a commit' : 'un commit'}</Serif> {lang === 'en' ? 'together.' : 'juntos.'}
           </h2>
           <a
             href={`mailto:${contact.email}`}
@@ -35,7 +38,7 @@ export function TextContact() {
             strokeWidth="2"
             strokeLinecap="round"
             role="img"
-            aria-label="Firma de Juan José"
+            aria-label={lang === 'en' ? 'Juan Jose Signature' : 'Firma de Juan José'}
             className="mt-4 max-w-full"
           >
             <path d="M10 48c14-30 22-36 20-14s-8 30 2 18 18-34 26-26-6 24 6 16 14-18 22-12 2 14 12 8 20-22 30-14-4 16 8 12 30-16 40-8M40 60h150" />

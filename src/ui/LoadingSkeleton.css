@@ -1,0 +1,25 @@
+.loading-skeleton { position: absolute; inset: 0; overflow: hidden; background: #05060a; pointer-events: none; }
+.loading-skeleton i, .loading-skeleton__book { display: block; background: rgba(255,255,255,.09); border-radius: 6px; }
+.loading-skeleton i { animation: skeleton-pulse 1.5s ease-in-out infinite; }
+.loading-skeleton__nav { position: absolute; top: 28px; left: 4%; right: 4%; display: flex; gap: 18px; align-items: center; }
+.loading-skeleton__nav i { width: 56px; height: 12px; }
+.loading-skeleton__nav i:first-child { width: 95px; height: 24px; margin-right: auto; }
+.loading-skeleton__title { position: absolute; top: 23%; left: 5%; width: min(35%, 420px); }
+.loading-skeleton__title i { height: 38px; margin-bottom: 12px; }
+.loading-skeleton__title i:nth-child(2) { width: 75%; }
+.loading-skeleton__title i:nth-child(3) { width: 60%; height: 12px; margin-top: 24px; }
+.loading-skeleton__book { position: absolute; top: 24%; left: 50%; width: min(31vw, 370px); height: min(52vh, 460px); transform: rotate(-5deg); border: 1px solid rgba(255,255,255,.12); box-shadow: 12px 14px 0 rgba(255,255,255,.035); }
+.loading-skeleton__book div { position: absolute; inset: 5%; border: 1px solid rgba(255,255,255,.09); }
+.loading-skeleton__controls { position: absolute; right: 5%; bottom: 5%; display: flex; gap: 10px; }
+.loading-skeleton__controls i { width: 75px; height: 32px; border-radius: 999px; }
+.loading-skeleton__captured { position: absolute; }
+@keyframes skeleton-pulse { 50% { opacity: .5; } }
+/* Reveal the visible hero in reading order while the destination cover fades away. */
+@keyframes text-reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.text-view-visible [data-text-skeleton-source] section > div > * { animation: text-reveal 500ms ease both; }
+.text-view-visible [data-text-skeleton-source] section > div > :nth-child(1) { animation-delay: 200ms; }
+.text-view-visible [data-text-skeleton-source] section > div > :nth-child(2) { animation-delay: 300ms; }
+.text-view-visible [data-text-skeleton-source] section > div > :nth-child(3) { animation-delay: 400ms; }
+.text-view-visible [data-text-skeleton-source] section > div > :nth-child(4) { animation-delay: 500ms; }
+@media (max-width: 640px) { .loading-skeleton__title { top: 18%; width: 75%; } .loading-skeleton__title i { height: 25px; } .loading-skeleton__book { top: 42%; left: 33%; width: 40vw; height: 35vh; } }
+@media (prefers-reduced-motion: reduce) { .loading-skeleton i, .text-view-visible [data-text-skeleton-source] section > div > * { animation: none; } }

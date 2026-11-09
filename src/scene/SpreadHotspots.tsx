@@ -8,6 +8,7 @@ import { isPlaceholder } from '../lib/placeholder';
 import { SPREADS, hashFromPage } from '../lib/spreads';
 import { BACK_COVER_ID, FACE_SIZE } from '../pages-design/faceIds';
 import { useBook } from '../store/useBook';
+import { useLanguage } from '../store/useLanguage';
 import { ContactForm } from '../ui/ContactForm';
 import { COMPACT_FILL } from './CameraRig';
 import { COVER_THICK, COVER_W, LAST_LEAF, PAGE_THICK, PAGE_W, PITCH, STACK_BASE_Y } from './bookLayout';
@@ -96,11 +97,12 @@ const hoverProps = (id: string) => ({
 });
 
 function GotoSpot({ h, touchPx }: { h: Hotspot; touchPx: number }) {
+  const lang = useLanguage((s) => s.lang);
   const page = h.page ?? 0;
   return (
     <a
       href={hashFromPage(page)}
-      aria-label={`Ir a ${SPREADS[page]?.label ?? 'la página'}`}
+      aria-label={lang === 'en' ? `Go to page ${page}` : `Ir a ${SPREADS[page]?.label ?? 'la página'}`}
       className={HOT}
       style={{ ...rect(h, touchPx), borderRadius: radiusOf(h) }}
       {...hoverProps(h.id)}
@@ -114,13 +116,14 @@ function GotoSpot({ h, touchPx }: { h: Hotspot; touchPx: number }) {
 }
 
 function LinkSpot({ h, touchPx }: { h: Hotspot; touchPx: number }) {
+  const lang = useLanguage((s) => s.lang);
   const href = resolveHref(h);
   if (!href || isPlaceholder(href)) return null;
   const external = !href.startsWith('mailto:');
   return (
     <a
       href={href}
-      aria-label={linkLabel(h)}
+      aria-label={lang === 'en' ? `Open ${h.id.replaceAll('-', ' ')}` : linkLabel(h)}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       className={HOT}
       style={{ ...rect(h, touchPx), borderRadius: radiusOf(h) }}
@@ -132,12 +135,13 @@ function LinkSpot({ h, touchPx }: { h: Hotspot; touchPx: number }) {
 
 /** CV button: a real download once the PDF exists, otherwise a visible placeholder (never a dead link). */
 function DownloadSpot({ h, touchPx }: { h: Hotspot; touchPx: number }) {
+  const lang = useLanguage((s) => s.lang);
   if (person.cvAvailable) {
     return (
       <a
         href={person.cv}
         download
-        aria-label="Descargar CV en PDF"
+        aria-label={lang === 'en' ? 'Download CV as PDF' : 'Descargar CV en PDF'}
         className={HOT}
         style={{ ...rect(h, touchPx), borderRadius: radiusOf(h) }}
         {...hoverProps(h.id)}
@@ -149,8 +153,8 @@ function DownloadSpot({ h, touchPx }: { h: Hotspot; touchPx: number }) {
     <div
       role="link"
       aria-disabled="true"
-      aria-label="Descargar CV: el archivo aún no está disponible"
-      title="El PDF del CV aún no está disponible"
+      aria-label={lang === 'en' ? 'Download CV: file not yet available' : 'Descargar CV: el archivo aún no está disponible'}
+      title={lang === 'en' ? 'The CV PDF is not available yet' : 'El PDF del CV aún no está disponible'}
       className="flex items-center justify-center text-center font-mono text-[20px] uppercase tracking-[0.1em] text-[#1b1813]"
       style={{
         ...rect(h, touchPx),
@@ -162,7 +166,7 @@ function DownloadSpot({ h, touchPx }: { h: Hotspot; touchPx: number }) {
       }}
       onClick={swallow}
     >
-      [CV PRÓXIMAMENTE]
+      {lang === 'en' ? '[CV COMING SOON]' : '[CV PRÓXIMAMENTE]'}
     </div>
   );
 }
@@ -179,6 +183,7 @@ const VIDEO_SHAPE: Record<string, CSSProperties> = {
 
 /** Short demo clip over the printed capture: plays on hover / focus, pauses on leave (click toggles). */
 function VideoSpot({ h }: { h: Hotspot }) {
+  const lang = useLanguage((s) => s.lang);
   const project = projectOf(h.id.replace(/^video-/, ''));
   const video = useRef<HTMLVideoElement>(null);
   const [live, setLive] = useState(false); // a frame is on screen: fade the clip in over the capture
@@ -198,7 +203,7 @@ function VideoSpot({ h }: { h: Hotspot }) {
   return (
     <button
       type="button"
-      aria-label={`Demo en video de ${project.name}`}
+      aria-label={lang === 'en' ? `${project.name} video demo` : `Demo en video de ${project.name}`}
       className={`${HOT} overflow-hidden p-0`}
       style={{ ...rect(h), ...VIDEO_SHAPE[project.id] }}
       onPointerEnter={(event) => {
@@ -235,12 +240,13 @@ function VideoSpot({ h }: { h: Hotspot }) {
 }
 
 function FormSpot({ h, compact }: { h: Hotspot; compact: boolean }) {
+  const lang = useLanguage((s) => s.lang);
   if (compact) {
     // The printed area is a few dozen pixels wide on a phone: a big button opens the form in a sheet instead.
     return (
       <button
         type="button"
-        aria-label="Abrir el formulario de contacto"
+        aria-label={lang === 'en' ? 'Open contact form' : 'Abrir el formulario de contacto'}
         className="flex flex-col items-center justify-center gap-[18px] bg-white p-[24px] text-center font-display text-[66px] font-semibold leading-[1.05] text-black"
         style={{ ...rect(h), borderRadius: 40 }}
         onClick={(event) => {
@@ -248,9 +254,9 @@ function FormSpot({ h, compact }: { h: Hotspot; compact: boolean }) {
           useBook.getState().setContactOpen(true);
         }}
       >
-        Escribir un mensaje
+        {lang === 'en' ? 'Write a message' : 'Escribir un mensaje'}
         <span aria-hidden="true" className="font-mono text-[34px] uppercase tracking-[0.12em]">
-          Tocar para abrir →
+          {lang === 'en' ? 'Tap to open →' : 'Tocar para abrir →'}
         </span>
       </button>
     );
@@ -346,7 +352,8 @@ function FaceLayer({
   touchPx: number;
   compact: boolean;
 }) {
-  const spots = hotspotsForFace(face);
+  const lang = useLanguage((s) => s.lang);
+  const spots = hotspotsForFace(face, lang);
   if (!spots.length) return null;
   return (
     <Html
