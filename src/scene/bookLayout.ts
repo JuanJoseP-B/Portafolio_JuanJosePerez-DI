@@ -53,15 +53,16 @@ export interface PagesManifest {
   hires?: number[];
 }
 
-export const pageFileUrl = (face: number, version = 0): string =>
-  `${PAGES_DIR}/page-${String(face).padStart(2, '0')}.webp?v=${version}`;
-export const pageFile2xUrl = (face: number, version = 0): string =>
-  `${PAGES_DIR}/page-${String(face).padStart(2, '0')}@2x.webp?v=${version}`;
-export const backCoverFileUrl = (version = 0): string => `${PAGES_DIR}/back-cover.webp?v=${version}`;
+const localeDir = (lang: 'es' | 'en') => lang === 'en' ? `${PAGES_DIR}/en` : PAGES_DIR;
+export const pageFileUrl = (face: number, version = 0, lang: 'es' | 'en' = 'es'): string =>
+  `${localeDir(lang)}/page-${String(face).padStart(2, '0')}.webp?v=${version}`;
+export const pageFile2xUrl = (face: number, version = 0, lang: 'es' | 'en' = 'es'): string =>
+  `${localeDir(lang)}/page-${String(face).padStart(2, '0')}@2x.webp?v=${version}`;
+export const backCoverFileUrl = (version = 0, lang: 'es' | 'en' = 'es'): string => `${localeDir(lang)}/back-cover.webp?v=${version}`;
 // Phones load the light 800x550 versions as the base image (about a third of the bytes and GPU memory).
-export const pageFileMobileUrl = (face: number, version = 0): string =>
-  `${PAGES_DIR}/page-${String(face).padStart(2, '0')}@mobile.webp?v=${version}`;
-export const backCoverMobileUrl = (version = 0): string => `${PAGES_DIR}/back-cover@mobile.webp?v=${version}`;
+export const pageFileMobileUrl = (face: number, version = 0, lang: 'es' | 'en' = 'es'): string =>
+  `${localeDir(lang)}/page-${String(face).padStart(2, '0')}@mobile.webp?v=${version}`;
+export const backCoverMobileUrl = (version = 0, lang: 'es' | 'en' = 'es'): string => `${localeDir(lang)}/back-cover@mobile.webp?v=${version}`;
 
 export interface FaceSpec {
   id: number;

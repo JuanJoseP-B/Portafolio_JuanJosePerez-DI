@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 import type { Project } from '../../content/portfolio';
 import { motion } from '../../lib/motion';
+import { useLanguage } from '../../store/useLanguage';
 
 /** Only one demo clip plays at a time, whatever started it (hover, focus, scroll or the button). */
 let activeVideo: HTMLVideoElement | null = null;
@@ -35,6 +36,7 @@ const STAGE_TINT: Record<Project['id'], string> = {
  * while the text version is hidden (sr-only), so nothing is observed or loaded in the background.
  */
 export function ProjectMedia({ project, enabled }: { project: Project; enabled: boolean }) {
+  const lang = useLanguage((s) => s.lang);
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -103,7 +105,7 @@ export function ProjectMedia({ project, enabled }: { project: Project; enabled: 
         playsInline
         preload="none"
         poster={project.poster}
-        aria-label={`Demo en video de ${project.name}`}
+        aria-label={lang === 'en' ? `${project.name} video demo` : `Demo en video de ${project.name}`}
         className="h-full w-full object-contain"
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
@@ -114,7 +116,7 @@ export function ProjectMedia({ project, enabled }: { project: Project; enabled: 
         type="button"
         onClick={toggle}
         aria-pressed={playing}
-        aria-label={`${playing ? 'Pausar' : 'Reproducir'} el video de ${project.name}`}
+        aria-label={lang === 'en' ? `${playing ? 'Pause' : 'Play'} ${project.name} video` : `${playing ? 'Pausar' : 'Reproducir'} el video de ${project.name}`}
         className="absolute bottom-3 right-3 grid h-11 w-11 cursor-pointer place-items-center rounded-pill border border-glass-border bg-[rgba(5,6,10,.7)] text-ink backdrop-blur-md transition-colors hover:border-white/40"
       >
         {playing ? (

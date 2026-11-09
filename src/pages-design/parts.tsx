@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { portfolio, type Project, type ProjectId } from '../content/portfolio';
+import type { Project, ProjectId } from '../content/portfolio';
+import { portfolio } from './locale';
 
 const { person } = portfolio;
 

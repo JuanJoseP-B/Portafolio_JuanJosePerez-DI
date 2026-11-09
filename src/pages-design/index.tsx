@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BACK_COVER_ID, DESIGNED_FACE_IDS } from './faceIds';
 import { FACE_COMPONENTS } from './faces';
+import { localizePrintedLabels } from './locale';
 
 // Fonts used by the faces; each is requested explicitly so the capture never shows a fallback.
 const FONT_SPECS = [
@@ -51,6 +52,8 @@ export function PageRoute() {
     // The book app locks scrolling; this route must be scrollable when previewed in a small window.
     document.body.style.overflow = 'auto';
     if (!Face) return;
+    const frame = document.querySelector('[data-page-frame]');
+    if (frame) localizePrintedLabels(frame);
     let cancelled = false;
     void waitForAssets().then(() => {
       if (!cancelled) document.querySelector('[data-page-frame]')?.setAttribute('data-ready', 'true');

@@ -1,4 +1,5 @@
-import { portfolio, type TimelineEntry } from '../../content/portfolio';
+import type { TimelineEntry } from '../../content/portfolio';
+import { portfolio } from '../locale';
 import { PageFrame } from '../PageFrame';
 import { Folio, PageHeader } from '../parts';
 

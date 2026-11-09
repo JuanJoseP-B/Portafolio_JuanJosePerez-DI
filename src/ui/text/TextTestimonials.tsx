@@ -1,13 +1,15 @@
-import { portfolio } from '../../content/portfolio';
+import { getPortfolio, getTr } from '../../content/portfolio';
+import { useLanguage } from '../../store/useLanguage';
 import { CONTAINER, H2, Serif, initials } from './shared';
 
-const { testimonials } = portfolio;
-
-/** Fixed tilt of each paper note, in degrees (design handoff). */
 const TILTS = [-1.5, 1, -0.5, 1.5, -1, 0.75];
 
 /** "Notas en el margen": the testimonials as slightly tilted paper notes on a full-width band. */
 export function TextTestimonials() {
+  const { lang } = useLanguage();
+  const testimonials = getPortfolio(lang).testimonials;
+  const tr = getTr(lang);
+
   return (
     <section
       id="testimonios"
@@ -17,10 +19,10 @@ export function TextTestimonials() {
       <div className={`${CONTAINER} flex flex-col gap-12 py-[120px]`}>
         <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
           <span aria-hidden="true" className="font-serif text-[180px] italic leading-[.6] text-accent-warm">
-            “
+            {tr.textTestimonials.decorChar}
           </span>
           <h2 id="testimonios-title" className={H2}>
-            Notas <Serif>en el margen</Serif>
+            {tr.textTestimonials.title} <Serif>{tr.textTestimonials.serif}</Serif>
           </h2>
         </div>
 

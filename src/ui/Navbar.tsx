@@ -1,10 +1,22 @@
 import { useEffect, useState, type MouseEvent } from 'react';
 import { Menu, X } from 'lucide-react';
-import { portfolio, ui } from '../content/portfolio';
+import { portfolio, getUi } from '../content/portfolio';
 import { NAV_LINKS, currentHash, type NavLink } from '../lib/spreads';
 import { useBook } from '../store/useBook';
+import { useLanguage } from '../store/useLanguage';
 
 const { person } = portfolio;
+
+/** Localised labels for each hash key (EN only; ES uses the original NAV_LINKS labels). */
+const EN_LABELS: Record<string, string> = {
+  inicio: 'Home',
+  'sobre-mi': 'About me',
+  experiencia: 'Experience',
+  proyectos: 'Projects',
+  testimonios: 'Testimonials',
+  stack: 'Stack',
+  contacto: 'Contact',
+};
 
 /** Flips the book to the section and keeps the section's own hash (two links share the spread of "Sobre mí"). */
 function goTo(link: NavLink): void {
@@ -20,6 +32,8 @@ export function Navbar() {
   const page = useBook((s) => s.page);
   const [open, setOpen] = useState(false);
   const [hash, setHash] = useState(currentHash);
+  const { lang } = useLanguage();
+  const t = getUi(lang);
 
   useEffect(() => {
     const onHash = () => setHash(currentHash());
@@ -44,6 +58,8 @@ export function Navbar() {
     return siblings.some((l) => l.hash === hash) ? link.hash === hash : link === siblings[0];
   };
 
+  const getLabel = (link: NavLink) => (lang === 'en' ? (EN_LABELS[link.hash] ?? link.label) : link.label);
+
   const onLink = (link: NavLink) => (event: MouseEvent) => {
     event.preventDefault();
     setOpen(false);
@@ -58,7 +74,7 @@ export function Navbar() {
       <a
         href="#inicio"
         onClick={onLink(NAV_LINKS[0])}
-        aria-label={`${person.shortName} — inicio`}
+        aria-label={`${person.shortName} — ${lang === 'en' ? 'home' : 'inicio'}`}
         className="pointer-events-auto flex items-center gap-3 font-display text-xl font-semibold text-ink"
       >
         <span
@@ -71,7 +87,7 @@ export function Navbar() {
       </a>
 
       <div className="flex items-center gap-1">
-        <nav aria-label="Secciones" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label={lang === 'en' ? 'Sections' : 'Secciones'} className="hidden items-center gap-1 lg:flex">
           {inline.map((link) => (
             <a
               key={link.hash}
@@ -80,7 +96,7 @@ export function Navbar() {
               aria-current={isCurrent(link) ? 'page' : undefined}
               className={LINK}
             >
-              {link.label}
+              {getLabel(link)}
             </a>
           ))}
         </nav>
@@ -90,12 +106,12 @@ export function Navbar() {
           onClick={onLink(NAV_LINKS[NAV_LINKS.length - 1])}
           className="pointer-events-auto ml-2 rounded-btn bg-white px-5 py-3 text-sm font-medium text-black max-[479px]:hidden transition-all duration-150 hover:-translate-y-px hover:bg-[#e8eaf0] hover:shadow-glow-accent"
         >
-          {ui.contact}
+          {t.contact}
         </a>
 
         <button
           type="button"
-          aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
+          aria-label={open ? (lang === 'en' ? 'Close menu' : 'Cerrar menú') : lang === 'en' ? 'Open menu' : 'Abrir menú'}
           aria-expanded={open}
           aria-controls="menu-secciones"
           onClick={() => setOpen((v) => !v)}
@@ -109,14 +125,14 @@ export function Navbar() {
         <>
           <button
             type="button"
-            aria-label="Cerrar menú"
+            aria-label={lang === 'en' ? 'Close menu' : 'Cerrar menú'}
             tabIndex={-1}
             onClick={() => setOpen(false)}
             className="pointer-events-auto fixed inset-0 -z-10 cursor-default"
           />
           <nav
             id="menu-secciones"
-            aria-label="Secciones"
+            aria-label={lang === 'en' ? 'Sections' : 'Secciones'}
             className="pointer-events-auto absolute right-4 top-[4.75rem] w-56 rounded-md border border-glass-border bg-surface/95 p-2 backdrop-blur-xl sm:right-10 sm:top-[6.5rem]"
           >
             <ul>
@@ -128,7 +144,7 @@ export function Navbar() {
                     aria-current={isCurrent(link) ? 'page' : undefined}
                     className="block rounded-sm px-3 py-2.5 text-sm text-muted transition-colors hover:bg-glass hover:text-ink aria-[current=page]:text-ink"
                   >
-                    {link.label}
+                    {getLabel(link)}
                   </a>
                 </li>
               ))}

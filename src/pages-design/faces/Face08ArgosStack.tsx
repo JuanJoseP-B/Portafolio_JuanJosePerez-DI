@@ -1,4 +1,4 @@
-import { ui } from '../../content/portfolio';
+import { ui } from '../locale';
 import { PageFrame } from '../PageFrame';
 import { Folio, PageHeader, Pill, getProject } from '../parts';
 

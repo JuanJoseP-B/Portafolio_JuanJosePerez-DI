@@ -1,18 +1,11 @@
 import { useEffect, useId, useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { portfolio, ui } from '../../content/portfolio';
+import { portfolio, textNavLinks, getUi } from '../../content/portfolio';
+import { useLanguage } from '../../store/useLanguage';
+import { LanguageButton } from '../LanguageButton';
 import { BTN_OUTLINE, BTN_PRIMARY } from './shared';
 
 const { person } = portfolio;
-
-const LINKS: [num: string, label: string, hash: string][] = [
-  ['01', 'Sobre mí', '#sobre-mi'],
-  ['02', 'Proyectos', '#proyectos'],
-  ['03', 'Testimonios', '#testimonios'],
-  ['04', 'Experiencia', '#experiencia'],
-  ['05', 'Stack', '#stack'],
-  ['06', 'Contacto', '#contacto'],
-];
 
 // "JJ" + the surname in serif ("Pérez"), both derived from the content.
 const nameParts = person.name.split(' ');
@@ -31,6 +24,9 @@ const LINK = 'font-mono text-xs text-muted no-underline transition-colors hover:
 export function TextNav({ onClose }: { onClose?: () => void }) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
+  const { lang } = useLanguage();
+  const t = getUi(lang);
+  const LINKS = textNavLinks[lang];
 
   useEffect(() => {
     if (!open) return;
@@ -51,13 +47,14 @@ export function TextNav({ onClose }: { onClose?: () => void }) {
 
   const buttons = (
     <>
+      <LanguageButton />
       {onClose && (
         <button type="button" onClick={onClose} className={`${BTN_OUTLINE} cursor-pointer bg-transparent`}>
-          Volver al libro
+          {lang === 'en' ? 'Back to book' : 'Volver al libro'}
         </button>
       )}
       <a href="#contacto" onClick={close} className={BTN_PRIMARY}>
-        {ui.contact}
+        {t.contact}
       </a>
     </>
   );
@@ -65,7 +62,7 @@ export function TextNav({ onClose }: { onClose?: () => void }) {
   return (
     <div className="sticky top-0 z-40 px-[clamp(16px,4vw,40px)] py-4">
       <nav
-        aria-label="Principal"
+        aria-label={lang === 'en' ? 'Main navigation' : 'Principal'}
         className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 rounded-xl border border-glass-border bg-[rgba(13,16,24,.72)] py-[10px] pl-5 pr-3 shadow-glass backdrop-blur-xl"
       >
         <a href="#inicio" onClick={close} className="font-display text-[17px] font-bold text-ink no-underline">
@@ -80,7 +77,7 @@ export function TextNav({ onClose }: { onClose?: () => void }) {
           type="button"
           aria-expanded={open}
           aria-controls={panelId}
-          aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
+          aria-label={open ? (lang === 'en' ? 'Close menu' : 'Cerrar menú') : lang === 'en' ? 'Open menu' : 'Abrir menú'}
           onClick={() => setOpen((value) => !value)}
           className="grid h-11 w-11 cursor-pointer place-items-center rounded-md border border-glass-border bg-transparent text-ink md:hidden"
         >

@@ -24,7 +24,7 @@ export function DebugHud() {
   return (
     <aside
       aria-label="Panel de depuración (solo desarrollo)"
-      className="fixed bottom-4 left-4 z-50 max-w-[calc(100vw-2rem)] rounded-md border border-glass-border bg-surface/90 p-3 font-mono text-xs text-ink shadow-glass backdrop-blur"
+      className="fixed bottom-4 left-4 z-50 hidden max-w-[calc(100vw-2rem)] rounded-md border border-glass-border bg-surface/90 p-3 font-mono text-xs text-ink shadow-glass backdrop-blur sm:block"
     >
       <p className="mb-2 text-muted">
         dev · page <span className="text-accent">{page}</span> · target{' '}

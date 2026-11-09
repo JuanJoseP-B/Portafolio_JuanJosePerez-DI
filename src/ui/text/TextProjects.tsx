@@ -1,12 +1,10 @@
-import { portfolio, ui } from '../../content/portfolio';
+import { getPortfolio, getTr, getUi } from '../../content/portfolio';
 import type { Project } from '../../content/portfolio';
+import { useLanguage } from '../../store/useLanguage';
 import { Placeholder as T } from '../Placeholder';
 import { ProjectMedia } from './ProjectMedia';
 import { CONTAINER, Ext, Serif, SectionHead } from './shared';
 
-const { projects } = portfolio;
-
-/** Color of the case-file code per project (the handoff uses the green "success" token for SegundoAire). */
 const CODE_COLOR: Record<Project['id'], string> = {
   argos: 'text-accent',
   segundoaire: 'text-success',
@@ -14,6 +12,9 @@ const CODE_COLOR: Record<Project['id'], string> = {
 };
 
 function ProjectCard({ project, enabled }: { project: Project; enabled: boolean }) {
+  const { lang } = useLanguage();
+  const uiCopy = getUi(lang);
+
   return (
     <article
       id={`proyectos/${project.id}`}
@@ -36,7 +37,7 @@ function ProjectCard({ project, enabled }: { project: Project; enabled: boolean 
           <Serif className="text-[22px] text-muted">{project.subtitle}</Serif>
         </h3>
         <p className="m-0 text-sm leading-[1.55] text-muted">{project.description}</p>
-        <ul aria-label={`Tecnologías de ${project.name}`} className="m-0 flex list-none flex-wrap gap-[6px] p-0 font-mono text-[11px]">
+        <ul aria-label={lang === 'en' ? `${project.name} technologies` : `Tecnologías de ${project.name}`} className="m-0 flex list-none flex-wrap gap-[6px] p-0 font-mono text-[11px]">
           {project.stack.map((tech) => (
             <li key={tech} className="rounded-sm border border-glass-border px-[7px] py-[3px]">
               {tech}
@@ -44,8 +45,8 @@ function ProjectCard({ project, enabled }: { project: Project; enabled: boolean 
           ))}
         </ul>
         <div className="mt-auto flex flex-wrap gap-2 pt-2">
-          <Ext href={project.repo} label={ui.github} ariaLabel={`Código de ${project.name} en GitHub (pestaña nueva)`} />
-          <Ext href={project.demo} label={ui.liveDemo} ariaLabel={`Demo en vivo de ${project.name} (pestaña nueva)`} />
+          <Ext href={project.repo} label={uiCopy.github} ariaLabel={`GitHub - ${project.name}`} />
+          <Ext href={project.demo} label={uiCopy.liveDemo} ariaLabel={`Demo - ${project.name}`} />
         </div>
       </div>
     </article>
@@ -54,14 +55,18 @@ function ProjectCard({ project, enabled }: { project: Project; enabled: boolean 
 
 /** "Expedientes de caso": the three projects as case-file cards with a playable demo clip each. */
 export function TextProjects({ active }: { active: boolean }) {
+  const { lang } = useLanguage();
+  const projects = getPortfolio(lang).projects;
+  const tr = getTr(lang);
+
   return (
     <section
       id="proyectos"
       aria-labelledby="proyectos-title"
       className={`${CONTAINER} flex flex-col gap-12 pb-[120px]`}
     >
-      <SectionHead id="proyectos-title" counter={`02 / 06 · ${projects.length} casos abiertos`}>
-        Expedientes <Serif>de caso</Serif>
+      <SectionHead id="proyectos-title" counter={`${tr.textProjects.counter} · ${projects.length} ${lang === 'en' ? 'open cases' : 'casos abiertos'}`}>
+        {tr.textProjects.title} <Serif>{lang === 'en' ? 'cases' : 'de caso'}</Serif>
       </SectionHead>
       <div data-anim="pin-horizontal" className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-5">
         {projects.map((project) => (
