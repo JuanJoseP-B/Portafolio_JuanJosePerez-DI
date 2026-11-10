@@ -40,7 +40,7 @@ export function TextHero() {
       id="inicio"
       aria-labelledby="inicio-title"
       data-anim="grid-draw"
-      className="blueprint border-b border-[rgba(255,255,255,.08)]"
+      className="blueprint border-b border-[color:var(--divider)]"
     >
       <div className={`${CONTAINER} flex flex-col gap-8 pb-28 pt-24`}>
         <p className="m-0 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs tracking-[.08em] text-muted">

@@ -18,9 +18,9 @@ function ProjectCard({ project, enabled }: { project: Project; enabled: boolean 
   return (
     <article
       id={`proyectos/${project.id}`}
-      className="flex flex-col overflow-hidden rounded-md border border-[rgba(255,255,255,.1)] bg-surface"
+      className="flex flex-col overflow-hidden rounded-md border border-[color:var(--border-soft)] bg-surface"
     >
-      <div className="flex items-center justify-between gap-2 border-b border-[rgba(255,255,255,.08)] px-4 py-3">
+      <div className="flex items-center justify-between gap-2 border-b border-[color:var(--divider)] px-4 py-3">
         <span data-anim="count" className={`font-mono text-xs ${CODE_COLOR[project.id]}`}>
           {project.code}
         </span>

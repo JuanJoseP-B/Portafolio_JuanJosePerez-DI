@@ -1,5 +1,6 @@
-import { SRGBColorSpace, TextureLoader, type Texture } from 'three';
+import { ImageLoader, SRGBColorSpace, type Texture } from 'three';
 import { reportManifest, reportTextureSettled } from '../lib/loadProgress';
+import type { Lang } from '../store/useLanguage';
 import {
   FACES,
   PAGES_MANIFEST_URL,
@@ -124,11 +125,12 @@ export interface BookTextures {
    * Cheap to call on every zoom change; it keeps its own hysteresis.
    */
   updateHiRes: (level: number, page: number) => void;
+  updateLanguage: (lang: Lang) => Promise<void>;
   dispose: () => void;
 }
 
 /** Null when the manifest is missing (e.g. nothing exported yet) or the dev server answered with HTML. */
-async function fetchManifest(lang: 'es' | 'en'): Promise<PagesManifest | null> {
+async function fetchManifest(lang: Lang): Promise<PagesManifest | null> {
   try {
     const url = lang === 'en' ? PAGES_MANIFEST_URL.replace('/manifest.json', '/en/manifest.json') : PAGES_MANIFEST_URL;
     const res = await fetch(`${url}?t=${Date.now()}`, { cache: 'no-store' });
@@ -140,46 +142,24 @@ async function fetchManifest(lang: 'es' | 'en'): Promise<PagesManifest | null> {
   }
 }
 
-/**
- * Replaces the pixels of an existing placeholder texture with an exported image.
- * The Texture object stays the same, so materials already holding it pick the image up;
- * `dispose()` first because the GPU storage of the placeholder has a different size.
- */
-function swapImage(
-  loader: TextureLoader,
-  target: Texture,
-  url: string,
-  anisotropy: number,
-  isDisposed: () => boolean,
-  onApplied?: (image: unknown) => void,
-) {
-  loader.load(
-    url,
-    (loaded) => {
-      reportTextureSettled();
-      if (isDisposed()) {
-        loaded.dispose();
-        return;
-      }
-      target.dispose();
-      target.image = loaded.image;
-      target.colorSpace = SRGBColorSpace;
-      target.anisotropy = anisotropy;
-      target.needsUpdate = true;
-      onApplied?.(loaded.image);
-    },
-    undefined,
-    reportTextureSettled, // keep the placeholder if one image fails to load; the loader must not wait for it
-  );
+/** Keep material references stable and free the old GPU storage before replacing the pixels. */
+function applyImage(target: Texture, image: HTMLImageElement) {
+  target.dispose();
+  target.image = image;
+  target.colorSpace = SRGBColorSpace;
+  target.needsUpdate = true;
 }
 
 /**
  * `mobile` loads the 800x550 images as the base and, while zoomed in, the regular 1600x1100 ones in place
  * of the 2x ones (the sharper step on a phone), so a phone never holds more than a few large textures.
  */
-export function createBookTextures(maxAnisotropy: number, mobile = false, lang: 'es' | 'en' = 'es'): BookTextures {
-  const loader = new TextureLoader();
+export function createBookTextures(maxAnisotropy: number, mobile = false, initialLang: Lang = 'es'): BookTextures {
+  const loader = new ImageLoader();
   let disposed = false;
+  let displayedLang = initialLang;
+  let languageRequest = 0;
+  let textureGeneration = 0;
 
   const faces = FACES.map((spec): Texture | null => {
     if (spec.id === 0) return null;
@@ -198,7 +178,7 @@ export function createBookTextures(maxAnisotropy: number, mobile = false, lang: 
   // (while zoomed) -> back to the stored 1x image. `dispose()` before each swap frees the old GPU storage.
   type HiState = 'idle' | 'loading' | 'high';
   let manifestInfo: PagesManifest | null = null;
-  const lowImage: unknown[] = []; // the 1x image of each face once applied
+  const lowImage: HTMLImageElement[] = []; // the 1x image of each face once applied
   const hiState: HiState[] = FACES.map(() => 'idle');
   const hiWanted: boolean[] = FACES.map(() => false);
   const hiFailed: boolean[] = FACES.map(() => false);
@@ -210,21 +190,22 @@ export function createBookTextures(maxAnisotropy: number, mobile = false, lang: 
 
   const loadHi = (id: number, tex: Texture) => {
     hiState[id] = 'loading';
+    const generation = textureGeneration;
+    const version = manifestInfo?.version ?? 0;
     loader.load(
-      mobile ? pageFileUrl(id, manifestInfo?.version ?? 0, lang) : pageFile2xUrl(id, manifestInfo?.version ?? 0, lang),
-      (loaded) => {
-        if (disposed || !hiWanted[id]) {
-          loaded.dispose();
+      mobile ? pageFileUrl(id, version, displayedLang) : pageFile2xUrl(id, version, displayedLang),
+      (image) => {
+        if (disposed || generation !== textureGeneration) return;
+        if (!hiWanted[id]) {
           hiState[id] = 'idle';
           return;
         }
-        tex.dispose();
-        tex.image = loaded.image;
-        tex.needsUpdate = true;
+        applyImage(tex, image);
         hiState[id] = 'high';
       },
       undefined,
       () => {
+        if (disposed || generation !== textureGeneration) return;
         hiState[id] = 'idle';
         hiFailed[id] = true; // do not retry in a loop; the 1x image stays
       },
@@ -233,9 +214,7 @@ export function createBookTextures(maxAnisotropy: number, mobile = false, lang: 
 
   const releaseHi = (id: number, tex: Texture) => {
     if (lowImage[id] !== undefined) {
-      tex.dispose();
-      tex.image = lowImage[id];
-      tex.needsUpdate = true;
+      applyImage(tex, lowImage[id]);
     }
     hiState[id] = 'idle';
   };
@@ -279,37 +258,90 @@ export function createBookTextures(maxAnisotropy: number, mobile = false, lang: 
     }
   };
 
-  // Upgrade placeholders to the exported images listed in the manifest.
-  const baseUrl = (id: number, version: number) => (mobile ? pageFileMobileUrl(id, version, lang) : pageFileUrl(id, version, lang));
-  void fetchManifest(lang).then((manifest) => {
+  const baseFiles = (manifest: PagesManifest, lang: Lang) => {
+    const files = manifest.faces
+      .filter((id) => id === 0 || faces[id])
+      .map((id) => ({
+        id,
+        target: id === 0 ? cover : faces[id]!,
+        url: mobile ? pageFileMobileUrl(id, manifest.version, lang) : pageFileUrl(id, manifest.version, lang),
+      }));
+    if (manifest.backCover) {
+      const url = mobile ? backCoverMobileUrl(manifest.version, lang) : backCoverFileUrl(manifest.version, lang);
+      files.push({ id: -1, target: backCover, url });
+    }
+    return files;
+  };
+
+  // Only the initial load uses placeholders and reports progress to the opening screen.
+  void fetchManifest(initialLang).then((manifest) => {
     if (disposed) return;
-    if (!manifest) {
-      reportManifest(0); // nothing exported: keep the placeholders and let the loader finish
+    if (!manifest || textureGeneration > 0) {
+      reportManifest(0);
       return;
     }
     manifestInfo = manifest;
-    const isDisposed = () => disposed;
-    const ids = manifest.faces.filter((id) => id === 0 || faces[id]);
-    reportManifest(ids.length + (manifest.backCover ? 1 : 0));
-    for (const id of ids) {
-      if (id === 0) swapImage(loader, cover, baseUrl(0, manifest.version), maxAnisotropy, isDisposed);
-      else {
-        swapImage(loader, faces[id]!, baseUrl(id, manifest.version), maxAnisotropy, isDisposed, (image) => {
+    const files = baseFiles(manifest, initialLang);
+    reportManifest(files.length);
+    for (const { id, target, url } of files) {
+      loader.load(url, (image) => {
+        if (disposed) return;
+        reportTextureSettled();
+        if (textureGeneration > 0) return;
+        applyImage(target, image);
+        if (id > 0) {
           lowImage[id] = image;
-          applyHiRes(); // zoom may already be active when the base image arrives
-        });
-      }
-    }
-    if (manifest.backCover) {
-      const url = mobile ? backCoverMobileUrl(manifest.version, lang) : backCoverFileUrl(manifest.version, lang);
-      swapImage(loader, backCover, url, maxAnisotropy, isDisposed);
+          applyHiRes();
+        }
+      }, undefined, () => {
+        if (!disposed) reportTextureSettled();
+      });
     }
   });
+
+  const updateLanguage = async (lang: Lang) => {
+    const request = ++languageRequest;
+    if (disposed || lang === displayedLang) return;
+    const isCurrent = () => !disposed && request === languageRequest;
+    const manifest = await fetchManifest(lang);
+    if (!manifest || !isCurrent()) return;
+
+    // Keep the current book visible while the entire translation is downloaded and decoded.
+    // Commit every face together so a spread never shows a placeholder or a half-updated translation.
+    try {
+      const files = baseFiles(manifest, lang);
+      const images = await Promise.all(files.map(async ({ url }) => {
+        const image = await loader.loadAsync(url);
+        await image.decode();
+        return image;
+      }));
+      if (!isCurrent() || files.length === 0) return;
+
+      textureGeneration += 1;
+      displayedLang = lang;
+      manifestInfo = manifest;
+      for (const spec of FACES) {
+        const target = faces[spec.id];
+        if (target && hiState[spec.id] === 'high') releaseHi(spec.id, target);
+      }
+      hiState.fill('idle');
+      hiFailed.fill(false);
+      files.forEach(({ id, target }, index) => {
+        const image = images[index];
+        applyImage(target, image);
+        if (id > 0) lowImage[id] = image;
+      });
+      applyHiRes();
+    } catch {
+      // A failed translation load leaves the current set of textures intact.
+    }
+  };
 
   return {
     faces,
     cover,
     backCover,
+    updateLanguage,
     updateHiRes: (level, page) => {
       hiLevel = level;
       hiPage = page;

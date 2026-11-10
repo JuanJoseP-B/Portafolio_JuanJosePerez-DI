@@ -1,5 +1,5 @@
 import { useEffect, useId, useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, Moon, Sun, X } from 'lucide-react';
 import { portfolio, textNavLinks, getUi } from '../../content/portfolio';
 import { useLanguage } from '../../store/useLanguage';
 import { LanguageButton } from '../LanguageButton';
@@ -18,15 +18,27 @@ const SURNAME = nameParts[2] ?? '';
 const LINK = 'font-mono text-xs text-muted no-underline transition-colors hover:text-accent-hover';
 
 /**
- * Sticky pill navbar of the text version. From `md` up it is the handoff layout (logo, numbered links,
+ * Sticky pill navbar of the text version. From `lg` up it is the handoff layout (logo, numbered links,
  * buttons); below that the links and buttons collapse behind a hamburger (course rubric).
  */
-export function TextNav({ onClose }: { onClose?: () => void }) {
+export function TextNav({
+  lightTheme,
+  onToggleTheme,
+  onClose,
+}: {
+  lightTheme: boolean;
+  onToggleTheme?: () => void;
+  onClose?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const { lang } = useLanguage();
   const t = getUi(lang);
   const LINKS = textNavLinks[lang];
+  const themeLabel = lightTheme
+    ? (lang === 'en' ? 'Switch to dark mode' : 'Cambiar a modo oscuro')
+    : (lang === 'en' ? 'Switch to light mode' : 'Cambiar a modo claro');
+  const ThemeIcon = lightTheme ? Moon : Sun;
 
   useEffect(() => {
     if (!open) return;
@@ -40,7 +52,7 @@ export function TextNav({ onClose }: { onClose?: () => void }) {
   const close = () => setOpen(false);
 
   const links = LINKS.map(([num, label, hash]) => (
-    <a key={hash} href={hash} onClick={close} className={`${LINK} flex min-h-[44px] items-center md:min-h-0`}>
+    <a key={hash} href={hash} onClick={close} className={`${LINK} flex min-h-[44px] items-center lg:min-h-0`}>
       {num} {label}
     </a>
   ));
@@ -63,30 +75,43 @@ export function TextNav({ onClose }: { onClose?: () => void }) {
     <div className="sticky top-0 z-40 px-[clamp(16px,4vw,40px)] py-4">
       <nav
         aria-label={lang === 'en' ? 'Main navigation' : 'Principal'}
-        className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 rounded-xl border border-glass-border bg-[rgba(13,16,24,.72)] py-[10px] pl-5 pr-3 shadow-glass backdrop-blur-xl"
+        className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 rounded-xl border border-glass-border bg-[color:var(--text-nav)] py-[10px] pl-5 pr-3 shadow-glass backdrop-blur-xl"
       >
         <a href="#inicio" onClick={close} className="font-display text-[17px] font-bold text-ink no-underline">
           {MONOGRAM}
           <span className="ml-1 font-serif text-[20px] font-normal italic text-accent-warm">{SURNAME}</span>
         </a>
 
-        <div className="hidden flex-wrap gap-x-[18px] gap-y-1 md:flex">{links}</div>
-        <div className="hidden gap-2 md:flex">{buttons}</div>
+        <div className="hidden flex-wrap gap-x-[18px] gap-y-1 lg:flex">{links}</div>
+        <div className="flex items-center gap-2">
+          {onToggleTheme && (
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              aria-label={themeLabel}
+              title={themeLabel}
+              className="grid h-11 w-11 cursor-pointer place-items-center rounded-md border border-glass-border bg-glass text-ink transition-colors hover:border-accent/60 hover:text-accent"
+            >
+              <ThemeIcon size={19} strokeWidth={1.75} aria-hidden="true" />
+            </button>
+          )}
+          <div className="hidden gap-2 lg:flex">{buttons}</div>
 
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls={panelId}
-          aria-label={open ? (lang === 'en' ? 'Close menu' : 'Cerrar menú') : lang === 'en' ? 'Open menu' : 'Abrir menú'}
-          onClick={() => setOpen((value) => !value)}
-          className="grid h-11 w-11 cursor-pointer place-items-center rounded-md border border-glass-border bg-transparent text-ink md:hidden"
-        >
-          {open ? <X size={20} strokeWidth={1.5} aria-hidden="true" /> : <Menu size={20} strokeWidth={1.5} aria-hidden="true" />}
-        </button>
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-controls={panelId}
+            aria-label={open ? (lang === 'en' ? 'Close menu' : 'Cerrar menú') : lang === 'en' ? 'Open menu' : 'Abrir menú'}
+            onClick={() => setOpen((value) => !value)}
+            className="grid h-11 w-11 cursor-pointer place-items-center rounded-md border border-glass-border bg-transparent text-ink lg:hidden"
+          >
+            {open ? <X size={20} strokeWidth={1.5} aria-hidden="true" /> : <Menu size={20} strokeWidth={1.5} aria-hidden="true" />}
+          </button>
+        </div>
 
         <div
           id={panelId}
-          className={`basis-full flex-col gap-1 border-t border-[rgba(255,255,255,.08)] pb-2 pt-2 md:hidden ${
+          className={`basis-full flex-col gap-1 border-t border-[color:var(--divider)] pb-2 pt-2 lg:hidden ${
             open ? 'flex' : 'hidden'
           }`}
         >

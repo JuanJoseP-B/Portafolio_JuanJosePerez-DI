@@ -117,7 +117,7 @@ export function ProjectMedia({ project, enabled }: { project: Project; enabled: 
         onClick={toggle}
         aria-pressed={playing}
         aria-label={lang === 'en' ? `${playing ? 'Pause' : 'Play'} ${project.name} video` : `${playing ? 'Pausar' : 'Reproducir'} el video de ${project.name}`}
-        className="absolute bottom-3 right-3 grid h-11 w-11 cursor-pointer place-items-center rounded-pill border border-glass-border bg-[rgba(5,6,10,.7)] text-ink backdrop-blur-md transition-colors hover:border-white/40"
+        className="absolute bottom-3 right-3 grid h-11 w-11 cursor-pointer place-items-center rounded-pill border border-glass-border bg-void/90 text-ink backdrop-blur-md transition-colors hover:border-accent/60"
       >
         {playing ? (
           <Pause size={18} strokeWidth={1.75} aria-hidden="true" />

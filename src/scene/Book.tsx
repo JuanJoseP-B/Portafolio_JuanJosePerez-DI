@@ -185,7 +185,6 @@ function createAssets(maxAnisotropy: number, mobile: boolean, lang: Lang) {
 
 /** The interactive book: covers, leaves with bones, page blocks, spine, hover / click / keyboard. */
 export function Book() {
-  const lang = useLanguage((s) => s.lang);
   const gl = useThree((s) => s.gl);
   const page = useBook((s) => s.page);
   const hoveredSide = useBook((s) => s.hoveredSide);
@@ -196,8 +195,18 @@ export function Book() {
   useBookKeys();
 
   // Phones start with the light textures; rotating the device later keeps whatever was loaded.
-  const assets = useMemo(() => createAssets(gl.capabilities.getMaxAnisotropy(), useBook.getState().compact, lang), [gl, lang]);
+  const assets = useMemo(
+    () => createAssets(gl.capabilities.getMaxAnisotropy(), useBook.getState().compact, useLanguage.getState().lang),
+    [gl],
+  );
   useEffect(() => () => assets.dispose(), [assets]);
+  useEffect(() => {
+    const updateLanguage = (lang: Lang) => { void assets.textures.updateLanguage(lang); };
+    updateLanguage(useLanguage.getState().lang);
+    return useLanguage.subscribe((state, previous) => {
+      if (state.lang !== previous.lang) updateLanguage(state.lang);
+    });
+  }, [assets]);
 
   // Sharper 2x faces for the visible spread while zoomed in; released when zooming back out.
   useEffect(() => {
@@ -214,7 +223,6 @@ export function Book() {
   }, [assets]);
 
   // Initial state comes from the hash, so a deep link starts already flipped (no animation).
-  // Rebuilding the language-specific materials must preserve the current spread.
   const initialFlipped = useMemo(() => flippedCountFor(useBook.getState().target), [assets]);
   const initialLayout = layoutFor(initialFlipped);
   const anim = useMemo(

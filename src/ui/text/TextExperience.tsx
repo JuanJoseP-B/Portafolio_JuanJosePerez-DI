@@ -41,7 +41,7 @@ export function TextExperience() {
                   entry.tone === 'accent' ? 'border-accent' : 'border-accent-warm'
                 }`}
               />
-              <span className="w-[2px] flex-1 bg-[rgba(92,225,230,.3)]" />
+              <span className="w-[2px] flex-1 bg-accent/30" />
             </div>
             <div className="flex flex-col gap-[6px] pb-9">
               <div className="flex flex-wrap gap-3 font-mono text-xs">

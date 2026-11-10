@@ -17,7 +17,7 @@ function Keycap({ item }: { item: Key }) {
   );
 }
 
-const PANEL = 'flex flex-col gap-4 rounded-md border border-[rgba(255,255,255,.1)] bg-surface p-6';
+const PANEL = 'flex flex-col gap-4 rounded-md border border-[color:var(--border-soft)] bg-surface p-6';
 const PANEL_LABEL = 'font-mono text-[11px] tracking-[.08em] text-muted';
 
 /** "Mi teclado": the stack as rows of keycaps, plus the engineering approach and the hobbies. */

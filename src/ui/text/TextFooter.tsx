@@ -27,7 +27,7 @@ export function TextFooter({ onBackToTop }: { onBackToTop: () => void }) {
         <span>{tr.textFooter.handmade}</span>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-[rgba(255,255,255,.08)] pt-4">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-[color:var(--divider)] pt-4">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <div className="flex items-center">
             <a
@@ -58,7 +58,7 @@ export function TextFooter({ onBackToTop }: { onBackToTop: () => void }) {
         <button
           type="button"
           onClick={onBackToTop}
-          className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-md border border-glass-border bg-transparent px-[18px] font-mono text-xs text-ink transition-all duration-150 hover:border-white/30 hover:shadow-glow-accent"
+          className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-md border border-glass-border bg-transparent px-[18px] font-mono text-xs text-ink transition-all duration-150 hover:border-accent/60 hover:shadow-glow-accent"
         >
           <ArrowUp size={14} strokeWidth={1.75} aria-hidden="true" />
           {uiCopy.backToTop}

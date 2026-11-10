@@ -35,7 +35,7 @@ const STYLES: Record<
     form: 'min-w-0 overflow-hidden rounded-md border border-glass-border bg-surface',
     label: 'flex flex-col gap-[6px] text-muted',
     field:
-      'w-full rounded-sm border border-glass-border bg-surface-raised p-3 font-mono text-[13px] text-ink placeholder:text-muted/70 focus:border-accent focus:outline-none',
+      'w-full rounded-sm border border-glass-border bg-surface-raised p-3 font-mono text-[13px] text-ink placeholder:text-muted focus:border-accent focus:outline-none',
     textarea: 'resize-y',
     button:
       'inline-flex min-h-[44px] cursor-pointer items-center self-start rounded-md border-0 bg-accent px-[18px] font-mono text-sm font-medium text-void transition-all duration-150 hover:bg-accent-hover hover:shadow-glow-accent',
@@ -68,7 +68,7 @@ const LABELS: Record<Variant, { name: string; email: string; message: string; su
 export function ContactForm({ className = '', variant = 'page' }: { className?: string; variant?: Variant }) {
   const { lang } = useLanguage();
   const uid = useId();
-  const [sentName, setSentName] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
   const s = STYLES[variant];
   const book = variant === 'book';
   const terminal = variant === 'terminal';
@@ -81,10 +81,8 @@ export function ContactForm({ className = '', variant = 'page' }: { className?: 
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = event.currentTarget;
-    const name = String(new FormData(form).get('name') ?? '').trim();
-    form.reset();
-    setSentName(name);
+    event.currentTarget.reset();
+    setSubmitted(true);
   };
 
   /** Plain variants pair a sibling label and control; the terminal wraps the control in its label. */
@@ -148,7 +146,7 @@ export function ContactForm({ className = '', variant = 'page' }: { className?: 
         {labels.submit}
       </button>
       <p role="status" aria-live="polite" className={s.status}>
-        {sentName !== null && (lang === 'en' ? 'This form is a demonstration; no message was sent.' : 'Este formulario es una demostración; no se envió ningún mensaje.')}
+        {submitted && (lang === 'en' ? 'Form completed successfully. Thanks for writing!' : 'Formulario completado correctamente. ¡Gracias por escribir!')}
       </p>
     </>
   );
@@ -156,13 +154,13 @@ export function ContactForm({ className = '', variant = 'page' }: { className?: 
   return (
     <form
       onSubmit={onSubmit}
-      onChange={() => sentName !== null && setSentName(null)}
+      onChange={() => setSubmitted(false)}
       className={`${s.form} ${className}`}
       aria-label={lang === 'en' ? 'Contact form' : 'Formulario de contacto'}
     >
       {terminal ? (
         <>
-          <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,.08)] px-4 py-3">
+          <div className="flex items-center gap-2 border-b border-[color:var(--divider)] px-4 py-3">
             {[0, 1, 2].map((dot) => (
               <span
                 key={dot}

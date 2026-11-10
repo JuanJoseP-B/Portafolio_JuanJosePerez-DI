@@ -9,7 +9,7 @@ const ORDINALS_EN = ['', 'First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth',
 const NUMBER_WORDS_EN = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
 
 const CARD =
-  'flex flex-col gap-[14px] rounded-md border border-[rgba(255,255,255,.1)] bg-surface p-6';
+  'flex flex-col gap-[14px] rounded-md border border-[color:var(--border-soft)] bg-surface p-6';
 const CARD_LABEL = 'font-mono text-[11px] tracking-[.08em] text-muted';
 const CARD_TITLE = 'font-display text-2xl font-semibold';
 

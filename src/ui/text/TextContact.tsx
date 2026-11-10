@@ -13,7 +13,7 @@ export function TextContact() {
     <section
       id="contacto"
       aria-labelledby="contacto-title"
-      className="blueprint border-t border-[rgba(255,255,255,.08)]"
+      className="blueprint border-t border-[color:var(--divider)]"
     >
       <div className="mx-auto flex max-w-[1200px] flex-wrap gap-12 px-[clamp(16px,4vw,40px)] py-[120px]">
         <div className="flex min-w-0 flex-[1_1_380px] flex-col gap-5">
@@ -24,7 +24,7 @@ export function TextContact() {
           <a
             href={`mailto:${contact.email}`}
             data-anim="magnetic"
-            className="break-all font-serif text-[clamp(26px,3.4vw,44px)] italic text-ink underline decoration-[rgba(255,181,71,.6)] underline-offset-8"
+            className="break-all font-serif text-[clamp(26px,3.4vw,44px)] italic text-ink underline decoration-accent-warm/60 underline-offset-8"
           >
             {contact.email}
           </a>

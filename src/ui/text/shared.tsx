@@ -8,7 +8,7 @@ export const CONTAINER = 'mx-auto w-full max-w-[1200px] px-[clamp(16px,4vw,40px)
 /** Shared look of a button / link-button (44 px touch target). */
 export const BTN =
   'inline-flex min-h-[44px] items-center gap-2 rounded-md px-[18px] text-sm font-medium no-underline transition-all duration-150';
-export const BTN_OUTLINE = `${BTN} border border-glass-border text-ink hover:border-white/30 hover:shadow-glow-accent`;
+export const BTN_OUTLINE = `${BTN} border border-glass-border text-ink hover:border-accent/60 hover:shadow-glow-accent`;
 export const BTN_PRIMARY = `${BTN} bg-accent text-void hover:bg-accent-hover hover:shadow-glow-accent`;
 
 /** The single "handwritten" word of a heading: italic serif, amber unless a class says otherwise. */

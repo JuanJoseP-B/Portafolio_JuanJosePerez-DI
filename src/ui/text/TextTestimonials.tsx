@@ -14,7 +14,7 @@ export function TextTestimonials() {
     <section
       id="testimonios"
       aria-labelledby="testimonios-title"
-      className="overflow-x-clip border-y border-[rgba(255,255,255,.08)] bg-surface"
+      className="overflow-x-clip border-y border-[color:var(--divider)] bg-surface"
     >
       <div className={`${CONTAINER} flex flex-col gap-12 py-[120px]`}>
         <div className="flex flex-wrap items-end gap-x-6 gap-y-2">

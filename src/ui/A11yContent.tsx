@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { TextBehind, TextHello } from './text/TextAbout';
 import { TextContact } from './text/TextContact';
 import { TextExperience } from './text/TextExperience';
@@ -11,6 +11,15 @@ import { TextTestimonials } from './text/TextTestimonials';
 
 /** Space kept above a section's content when an anchor link scrolls to it (sticky navbar plus a small margin). */
 const HEADER_OFFSET = 104;
+const THEME_KEY = 'portfolio-text-theme';
+
+function readLightTheme() {
+  try {
+    return window.localStorage.getItem(THEME_KEY) === 'light';
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Full semantic version of the content ("Bitácora de ingeniero" design). Screen-reader only by default;
@@ -28,7 +37,17 @@ export function A11yContent({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef(0);
-  const destinationRef = useRef(0);
+  const [lightTheme, setLightTheme] = useState(readLightTheme);
+
+  const toggleTheme = () => {
+    const nextTheme = !lightTheme;
+    setLightTheme(nextTheme);
+    try {
+      window.localStorage.setItem(THEME_KEY, nextTheme ? 'light' : 'dark');
+    } catch {
+      // The switch still works when browser storage is unavailable.
+    }
+  };
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -38,40 +57,13 @@ export function A11yContent({
       cancelAnimationFrame(frameRef.current);
       frameRef.current = 0;
     };
-    const onWheel = (event: WheelEvent) => {
-      if (event.ctrlKey || event.metaKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) ||
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      // Preserve native trackpad gestures and scrolling in nested scrollable areas.
-      if (event.deltaMode === 0 && Math.abs(event.deltaY) < 40) return;
-      let element = event.target as HTMLElement | null;
-      while (element && element !== container) {
-        if (element.scrollHeight > element.clientHeight &&
-            /auto|scroll/.test(getComputedStyle(element).overflowY)) return;
-        element = element.parentElement;
-      }
-      event.preventDefault();
-      const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? container.clientHeight : 1);
-      const currentTarget = frameRef.current ? destinationRef.current : container.scrollTop;
-      destinationRef.current = Math.max(0, Math.min(container.scrollHeight - container.clientHeight, currentTarget + delta));
-      if (frameRef.current) return;
-      const animate = () => {
-        const distance = destinationRef.current - container.scrollTop;
-        if (Math.abs(distance) < 0.5) {
-          container.scrollTop = destinationRef.current;
-          frameRef.current = 0;
-          return;
-        }
-        container.scrollTop += distance * 0.12;
-        frameRef.current = requestAnimationFrame(animate);
-      };
-      frameRef.current = requestAnimationFrame(animate);
-    };
-    container.addEventListener('wheel', onWheel, { passive: false });
+    // Manual input interrupts anchor animation and keeps the browser's native momentum.
+    container.addEventListener('wheel', cancel, { passive: true });
     container.addEventListener('pointerdown', cancel);
     container.addEventListener('keydown', cancel);
     return () => {
       cancel();
-      container.removeEventListener('wheel', onWheel);
+      container.removeEventListener('wheel', cancel);
       container.removeEventListener('pointerdown', cancel);
       container.removeEventListener('keydown', cancel);
     };
@@ -95,7 +87,6 @@ export function A11yContent({
     }
     const start = container.scrollTop;
     const distance = top - start;
-    destinationRef.current = top;
     const duration = Math.min(1200, Math.max(550, Math.abs(distance) * 0.45));
     const started = performance.now();
     const animate = (now: number) => {
@@ -147,10 +138,11 @@ export function A11yContent({
     <div
       ref={scrollRef}
       onClick={onAnchorClick}
+      data-theme={visible ? (lightTheme ? 'light' : 'dark') : undefined}
       className={visible ? 'text-view-visible fixed inset-0 z-[60] overflow-y-auto overflow-x-hidden bg-void text-ink' : 'sr-only'}
     >
       {notice}
-      <TextNav onClose={visible ? onClose : undefined} />
+      <TextNav lightTheme={lightTheme} onToggleTheme={visible ? toggleTheme : undefined} onClose={visible ? onClose : undefined} />
 
       <main>
         <div data-text-skeleton-source><TextHero /></div>
