@@ -1,7 +1,7 @@
 import { useLanguage } from '../store/useLanguage';
 import { getUi } from '../content/portfolio';
 
-/** Small floating button that opens the full text version. Positioning is handled by the parent wrapper in Overlay. */
+/** Opens the text portfolio; positioning is handled by Overlay. */
 export function TextVersionButton({ onToggleText }: { onToggleText: () => void }) {
   const { lang } = useLanguage();
   const t = getUi(lang);
@@ -9,9 +9,10 @@ export function TextVersionButton({ onToggleText }: { onToggleText: () => void }
     <button
       type="button"
       onClick={onToggleText}
-      className="pointer-events-auto rounded-pill border border-glass-border bg-glass px-3 py-1.5 text-[11px] text-muted backdrop-blur-md transition-colors hover:border-white/30 hover:text-ink sm:text-xs"
+      className="pointer-events-auto inline-flex min-h-11 items-center gap-2 rounded-pill border border-accent bg-accent px-4 py-2 text-xs font-semibold text-void shadow-[0_0_22px_rgba(92,225,230,0.3)] transition-colors hover:border-white hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
     >
       {t.textVersion}
+      <span aria-hidden="true">→</span>
     </button>
   );
 }

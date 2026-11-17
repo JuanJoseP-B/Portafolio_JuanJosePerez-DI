@@ -191,7 +191,7 @@ export function TextBehind() {
             </p>
           ))}
 
-          <div className="flex flex-col gap-3 rounded-md bg-cover px-5 py-[18px] text-ink">
+          <div className="skills-terminal flex flex-col gap-3 rounded-md bg-cover px-5 py-[18px] text-ink">
             <span className="font-mono text-[13px] text-muted">
               <span className="text-accent">jj@pasto</span>:~$ skills --list
             </span>

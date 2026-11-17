@@ -53,3 +53,11 @@
 .text-view-visible[data-theme="light"] img[src$="/threejs.svg"] {
   filter: brightness(.2);
 }
+
+/* This terminal stays dark in both themes, so its text must use the dark palette too. */
+.skills-terminal {
+  --ink-rgb: 244 246 251;
+  --muted-rgb: 154 163 181;
+  --accent-rgb: 92 225 230;
+  --glass-border: rgba(255,255,255,.24);
+}

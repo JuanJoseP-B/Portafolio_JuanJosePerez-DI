@@ -57,13 +57,15 @@ function useTabVisible(): boolean {
 }
 
 interface ExperienceProps {
+  /** Pause the scene while the text portfolio covers it. */
+  active: boolean;
   /** The browser took the WebGL context away (low memory, GPU reset, too many contexts). */
   onContextLost?: () => void;
   onContextRestored?: () => void;
 }
 
 /** Full-screen 3D scene: desk, props, the interactive book, light and post-processing. */
-export function Experience({ onContextLost, onContextRestored }: ExperienceProps) {
+export function Experience({ active, onContextLost, onContextRestored }: ExperienceProps) {
   const compact = useBook((s) => s.compact);
   const visible = useTabVisible();
   const range = compact ? DPR_RANGE_COMPACT : DPR_RANGE;
@@ -76,7 +78,7 @@ export function Experience({ onContextLost, onContextRestored }: ExperienceProps
       role="img"
       shadows
       dpr={Math.min(dpr, range[1])}
-      frameloop={visible ? 'always' : 'never'}
+      frameloop={visible && active ? 'always' : 'never'}
       gl={{ antialias: false, powerPreference: 'high-performance' }}
       camera={{ position: CAMERA_POSES.closed.position, fov: CAMERA_FOV, near: 0.1, far: 40 }}
       onCreated={({ gl }) => {

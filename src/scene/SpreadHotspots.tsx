@@ -45,7 +45,7 @@ function linkLabel(h: Hotspot): string {
   const [head, kind] = h.id.split('-');
   const project = projectOf(head);
   if (project && kind === 'github') return `Repositorio de ${project.name} en GitHub (se abre en una pestaña nueva)`;
-  if (project && kind === 'demo') return `Demo en vivo de ${project.name} (se abre en una pestaña nueva)`;
+  if (project && kind === 'demo') return `${project.id === 'arcofisio' ? 'Demo en video' : 'Demo en vivo'} de ${project.name} (se abre en una pestaña nueva)`;
   if (h.id === 'email') return `Escribir un correo a ${contact.email}`;
   if (h.id === 'linkedin') return `LinkedIn de ${person.shortName} (se abre en una pestaña nueva)`;
   if (h.id === 'github') return `GitHub de ${person.shortName} (se abre en una pestaña nueva)`;
@@ -181,7 +181,7 @@ const VIDEO_SHAPE: Record<string, CSSProperties> = {
   },
 };
 
-/** Short demo clip over the printed capture: plays on hover / focus, pauses on leave (click toggles). */
+/** Short demo clip over the printed capture: plays on hover / focus, pauses on leave. */
 function VideoSpot({ h }: { h: Hotspot }) {
   const lang = useLanguage((s) => s.lang);
   const project = projectOf(h.id.replace(/^video-/, ''));
@@ -203,7 +203,9 @@ function VideoSpot({ h }: { h: Hotspot }) {
   return (
     <button
       type="button"
-      aria-label={lang === 'en' ? `${project.name} video demo` : `Demo en video de ${project.name}`}
+      aria-label={project.videoUrl
+        ? (lang === 'en' ? `Open ${project.name} video demo on YouTube (opens in a new tab)` : `Abrir demo en video de ${project.name} en YouTube (se abre en una pestaña nueva)`)
+        : (lang === 'en' ? `${project.name} video demo` : `Demo en video de ${project.name}`)}
       className={`${HOT} overflow-hidden p-0`}
       style={{ ...rect(h), ...VIDEO_SHAPE[project.id] }}
       onPointerEnter={(event) => {
@@ -218,9 +220,18 @@ function VideoSpot({ h }: { h: Hotspot }) {
       onBlur={stop}
       onClick={(event) => {
         if (!swallow(event)) return;
+        if (project.id === 'arcofisio' && event.detail > 0) return;
+        if (project.videoUrl) {
+          window.open(project.videoUrl, '_blank', 'noopener,noreferrer');
+          return;
+        }
         const v = video.current;
         if (v && !v.paused) stop();
         else play();
+      }}
+      onDoubleClick={(event) => {
+        if (project.id !== 'arcofisio' || !project.videoUrl || !swallow(event)) return;
+        window.open(project.videoUrl, '_blank', 'noopener,noreferrer');
       }}
     >
       <video
@@ -233,7 +244,7 @@ function VideoSpot({ h }: { h: Hotspot }) {
         aria-hidden="true"
         onPlaying={() => setLive(true)}
         className="h-full w-full object-cover"
-        style={{ opacity: live ? 1 : 0, transition: 'opacity 250ms' }}
+        style={{ opacity: live ? 1 : 0, transition: 'opacity 250ms', objectPosition: project.id === 'arcofisio' ? 'right center' : undefined }}
       />
     </button>
   );

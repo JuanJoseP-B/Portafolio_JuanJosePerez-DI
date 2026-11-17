@@ -112,7 +112,23 @@ export function ProjectMedia({ project, enabled }: { project: Project; enabled: 
       >
         <source src={project.video} type="video/mp4" />
       </video>
-      <button
+      {project.videoUrl ? (
+        <a
+          href={project.videoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(event) => {
+            if (project.id === 'arcofisio' && event.detail > 0) event.preventDefault();
+          }}
+          onDoubleClick={(event) => {
+            if (project.id !== 'arcofisio') return;
+            event.preventDefault();
+            window.open(project.videoUrl, '_blank', 'noopener,noreferrer');
+          }}
+          aria-label={lang === 'en' ? `Open ${project.name} video demo on YouTube (opens in a new tab)` : `Abrir demo en video de ${project.name} en YouTube (se abre en una pestaña nueva)`}
+          className="absolute inset-0 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+        />
+      ) : <button
         type="button"
         onClick={toggle}
         aria-pressed={playing}
@@ -124,7 +140,7 @@ export function ProjectMedia({ project, enabled }: { project: Project; enabled: 
         ) : (
           <Play size={18} strokeWidth={1.75} aria-hidden="true" />
         )}
-      </button>
+      </button>}
     </div>
   );
 }

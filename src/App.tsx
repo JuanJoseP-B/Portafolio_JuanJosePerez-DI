@@ -75,7 +75,7 @@ export default function App() {
       <div className="fixed inset-0">
         <SceneBoundary key={attempt} onError={() => setStatus('error')}>
           <Suspense fallback={null}>
-            <Experience onContextLost={() => setContextLost(true)} onContextRestored={() => setContextLost(false)} />
+            <Experience active={!textMode} onContextLost={() => setContextLost(true)} onContextRestored={() => setContextLost(false)} />
           </Suspense>
         </SceneBoundary>
       </div>

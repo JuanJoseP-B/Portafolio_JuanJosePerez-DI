@@ -6,11 +6,6 @@ const project = getProject('arcofisio');
 const PANEL = { w: 1300, h: 790 };
 const SQUARE = PANEL.h; // the watch window is a square as tall as the panel, flush right
 
-// The capture is 707x544 with the round watch (diameter ~410 px) centred at (348, 280) on a beige
-// backdrop. The video is a square crop where the watch fills ~95 % of the side, so the capture is
-// cropped to the square that makes both watches the same size: side = 410 / 0.95 = 432 px.
-const CAPTURE = { w: 707, h: 544, cx: 348, cy: 280, side: 432 };
-const K = SQUARE / CAPTURE.side;
 const BACKDROP = '#e9dcc4'; // same beige as the capture and the video
 
 /** Face 11 — ArcoFisio capture (left page of spread 6, dark, amber accent). The video plays over the watch (Fase 5). */
@@ -61,16 +56,13 @@ export function Face11ArcoShot() {
           }}
         >
           <img
-            src={project.cover}
+            src={project.poster}
             alt={`Captura de ${project.name}: pantalla del reloj`}
             style={{
-              position: 'absolute',
-              width: CAPTURE.w * K,
-              height: CAPTURE.h * K,
-              left: -(CAPTURE.cx - CAPTURE.side / 2) * K,
-              top: -(CAPTURE.cy - CAPTURE.side / 2) * K,
-              maxWidth: 'none',
-              display: 'block',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'right center',
             }}
           />
         </div>

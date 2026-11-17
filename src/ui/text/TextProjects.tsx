@@ -46,7 +46,7 @@ function ProjectCard({ project, enabled }: { project: Project; enabled: boolean 
         </ul>
         <div className="mt-auto flex flex-wrap gap-2 pt-2">
           <Ext href={project.repo} label={uiCopy.github} ariaLabel={`GitHub - ${project.name}`} />
-          <Ext href={project.demo} label={uiCopy.liveDemo} ariaLabel={`Demo - ${project.name}`} />
+          <Ext href={project.demo} label={project.id === 'arcofisio' ? (lang === 'en' ? 'Video demo ↗' : 'Demo en video ↗') : uiCopy.liveDemo} ariaLabel={`Demo - ${project.name}`} />
         </div>
       </div>
     </article>

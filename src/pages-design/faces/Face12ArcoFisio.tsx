@@ -1,4 +1,4 @@
-import { ui } from '../locale';
+import { pageLang, ui } from '../locale';
 import { PageFrame } from '../PageFrame';
 import { Chip, Folio, PageHeader, Pill, getProject } from '../parts';
 
@@ -47,7 +47,7 @@ export function Face12ArcoFisio() {
           {ui.github}
         </Pill>
         <Pill id="arcofisio-demo" href={project.demo} tone="light" solid={false}>
-          {ui.liveDemo}
+          {pageLang === 'en' ? 'Video demo ↗' : 'Demo en video ↗'}
         </Pill>
       </div>
 

@@ -46,6 +46,8 @@ export interface Project {
   cover: string;
   /** Short demo clip (muted, played on hover). */
   video: string;
+  /** Optional full demo video opened when the preview is clicked. */
+  videoUrl?: string;
   /** First frame of the clip, shown by the text version before it plays. */
   poster: string;
   accent: string;
@@ -148,7 +150,7 @@ export const portfolio: Portfolio = {
     ],
     interests: ['Arquitectura Cloud', 'Bases de Datos', 'Clean Code'],
     principles: ['PRECISIÓN', 'CLARIDAD', 'CURIOSIDAD'],
-    photo: '/image.png',
+    photo: '/img/juan-jose.webp',
     photoAlt: 'Retrato de Juan José Pérez Bravo',
     cv: '/cv/JuanJose-CV.pdf',
     cvAvailable: true, // public/cv/JuanJose-CV.pdf is in place; set to false to show the CV button as a placeholder
@@ -178,6 +180,7 @@ export const portfolio: Portfolio = {
       demo: 'https://app-escritorio-mesadecrisis-di.vercel.app/',
       cover: '/img/projects/argos.webp',
       video: '/video/argos.mp4',
+      videoUrl: 'https://youtu.be/qxiktFzs7Eo',
       poster: '/video/argos-poster.jpg',
       accent: '#5ce1e6',
       code: 'EXP-001 · ARGOS',
@@ -199,6 +202,7 @@ export const portfolio: Portfolio = {
       demo: 'https://segundoaire-demo.vercel.app/',
       cover: '/img/projects/segundoaire.webp',
       video: '/video/segundoaire.mp4',
+      videoUrl: 'https://www.youtube.com/watch?v=kVn2jQao8OQ',
       poster: '/video/segundoaire-poster.jpg',
       // Proposal (green/blue "air"); confirm with the author.
       accent: '#58d68d',
@@ -219,9 +223,10 @@ export const portfolio: Portfolio = {
       ],
       stack: ['React', 'TypeScript', 'Web Audio API', 'Sensores de movimiento'],
       repo: 'https://github.com/JuanJoseP-B/ArcoFisio-PROY-SMARTWATHC-DI.git',
-      demo: 'https://arco-fisio-proy-smartwathc-di.vercel.app/',
+      demo: 'https://www.youtube.com/watch?v=RODDgEG8s24',
       cover: '/img/projects/arcofisio.webp',
       video: '/video/arcofisio.mp4',
+      videoUrl: 'https://www.youtube.com/watch?v=RODDgEG8s24',
       poster: '/video/arcofisio-poster.jpg',
       accent: '#ffb547',
       code: 'EXP-003 · ARCOFISIO',
@@ -422,7 +427,7 @@ export const ui = {
   letsTalk: 'HABLEMOS.',
   thanks: 'Gracias por hojear.',
   reopen: 'Volver a abrir ↺',
-  textVersion: 'Ver versión texto',
+  textVersion: 'Explora el portafolio en texto',
   backToTop: 'Volver arriba',
   credit: 'Hecho con React Three Fiber + Tailwind',
 } as const;
@@ -439,7 +444,7 @@ export const uiEn = {
   letsTalk: "LET'S TALK.",
   thanks: 'Thanks for browsing.',
   reopen: 'Open again ↺',
-  textVersion: 'View text version',
+  textVersion: 'Explore the text portfolio',
   backToTop: 'Back to top',
   credit: 'Built with React Three Fiber + Tailwind',
 } as const;
